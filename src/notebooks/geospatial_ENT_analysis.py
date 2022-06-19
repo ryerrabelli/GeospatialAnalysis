@@ -16,6 +16,14 @@ get_ipython().system('pip install geopandas --quiet')
 get_ipython().system('pip install geoplot --quiet')
 
 
+# In[3]:
+
+
+get_ipython().system('pip install watermark')
+get_ipython().run_line_magic('load_ext', 'watermark')
+get_ipython().run_line_magic('watermark', '-d -m -v -p numpy,matplotlib,sklearn,pandas')
+
+
 # # Set up
 
 # In[ ]:
@@ -74,9 +82,9 @@ print(sys.path)
 # In[ ]:
 
 
-if not os.path.exists("images"):
-    os.mkdir("images")
-image_folder_path = "images"
+image_folder_path = "outputs"
+if not os.path.exists(image_folder_path):
+    os.mkdir(image_folder_path)
 
 def save_figure(fig, file_name:str, animated=False):
     """
@@ -87,7 +95,7 @@ def save_figure(fig, file_name:str, animated=False):
     if not animated:
         fig.write_image(os.path.join(image_folder_path, file_name+".svg"))
         fig.write_image(os.path.join(image_folder_path, file_name+".png"))
-        fig.write_image(os.path.join(image_folder_path, file_name+".jpeg"))
+        fig.write_image(os.path.join(image_folder_path, file_name+".jpg"))
 
 
 # # Load data
