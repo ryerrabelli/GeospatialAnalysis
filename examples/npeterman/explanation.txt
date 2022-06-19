@@ -1,0 +1,5 @@
+/examples/npeterman/*
+- ent redo3.gwt <-  weights file for model by Nick
+- ent redo3.json  <- file outputted by Nick's python code and put into GeoDa
+- rahul ent.py    <-  Nick's python code.  He copies segments and runs them (as opposed to the whole file)
+- ent redo3anova.geojson  <-  output of GeoDa. Is a regular JSON file.
