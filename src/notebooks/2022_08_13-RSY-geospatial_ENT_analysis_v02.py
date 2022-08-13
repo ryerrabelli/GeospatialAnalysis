@@ -5,7 +5,7 @@
 
 # # Set up
 
-# In[18]:
+# In[1]:
 
 
 #@title ## Base imports
@@ -24,13 +24,13 @@ import urllib.request
 import json
 
 
-# In[4]:
+# In[22]:
 
 
 #@title ## Option 1) Mount google drive and import my code
 
 mountpoint_folder_name = "gdrive"  # can be anything, doesn't have to be "drive"
-project_path_within_drive = "PythonProjects/GeospatialAnalysis" #@param {type:"string"}
+project_path_within_drive = "PythonProjects/GeospatialAnalysis/src" #@param {type:"string"}
 project_path_full = os.path.join("/content/",mountpoint_folder_name,
                         "MyDrive",project_path_within_drive)
 try:
@@ -52,14 +52,14 @@ except ModuleNotFoundError:  # in case not run in Google colab
     traceback.print_exc()
 
 
-# In[2]:
+# In[ ]:
 
 
 #@title ## Option 2) Clone project files from GitHub
 
 get_ipython().system('git clone https://github.com/ryerrabelli/GeospatialAnalysis.git')
 
-project_path_full = os.path.join("/content/","GeospatialAnalysis")
+project_path_full = os.path.join("/content/","GeospatialAnalysis/src")
 sys.path.insert(1,project_path_full)
 get_ipython().run_line_magic('cd', 'GeospatialAnalysis')
 print(sys.path)
@@ -67,7 +67,7 @@ print(sys.path)
 
 # # Helper functions
 
-# In[20]:
+# In[3]:
 
 
 years = np.arange(2015,2019+1)
@@ -143,7 +143,7 @@ def save_figure(fig, file_name:str, animated=False):
 # ## Load ENT procedures df from csv file
 # This is specifically a wide type df so it is one row per procedure with years as different columns.To understand what is meant by long type and wide type dataframes, see https://towardsdatascience.com/visualization-with-plotly-express-comprehensive-guide-eb5ee4b50b57
 
-# In[22]:
+# In[4]:
 
 
 df_procedures_orig = pd.read_csv("data/2022_05_05 sums and slopes ent with HCPCS descriptions.csv", 
@@ -158,7 +158,7 @@ df_procedures_orig = pd.read_csv("data/2022_05_05 sums and slopes ent with HCPCS
 
 # ## Clean df and recalculate regression
 
-# In[23]:
+# In[5]:
 
 
 df_procedures_clean = df_procedures_orig.set_index(["HCPCS Code", "HCPCS Description"])
@@ -193,7 +193,7 @@ df_procedures_recalc = df_procedures_recalc[sorted(df_procedures_recalc.columns,
 df_procedures_recalc = df_procedures_recalc.sort_values(by=("Total Medicare Payment","Overall","Mean"), ascending=False)  # sort rows by volume 
 
 
-# In[25]:
+# In[23]:
 
 
 with pd.option_context('display.float_format', '{:,.2f}'.format):
@@ -206,7 +206,7 @@ save_df(df_procedures_recalc, "df_procedures_recalc")
 
 # ## Load data
 
-# In[4]:
+# In[7]:
 
 
 # @title Load spatial coordinates of counties
@@ -215,14 +215,14 @@ with urllib.request.urlopen('https://raw.githubusercontent.com/plotly/datasets/m
     counties = json.load(response)
 
 
-# In[5]:
+# In[8]:
 
 
 # @title Load conversion df between FIPS code and county string
 fips2county = pd.read_csv("data/fips2county.tsv", sep="\t", comment='#', dtype=str)
 
 
-# In[6]:
+# In[9]:
 
 
 # @title Load our ENT df of all counties, their info, and the Moran's analysis
@@ -230,7 +230,7 @@ fips2county = pd.read_csv("data/fips2county.tsv", sep="\t", comment='#', dtype=s
 df_counties_wide_orig = pd.read_csv("data/2022_04_10 ent initial output.csv", dtype={"FIPS": str})
 
 
-# In[7]:
+# In[10]:
 
 
 # Merge with the fips 2 county standard data set
@@ -239,7 +239,7 @@ df_counties_wide = pd.merge(left=df_counties_wide_orig, right=fips2county, how="
 df_counties_wide.insert(1, "County_St", df_counties_wide["CountyName"].astype(str) + ", " + df_counties_wide["StateAbbr"].astype(str))
 
 
-# In[16]:
+# In[11]:
 
 
 info_simple = ["FIPS", "CountyName","StateAbbr", "% ASC Billing", "Moran I score for ACS billing fraction"]
@@ -287,7 +287,7 @@ df_counties_long = pd.merge(left=df_counties_long,
 
 # ## Create summary data by Moran category
 
-# In[15]:
+# In[13]:
 
 
 categories = ["Total Number of Services","Total Medicare Payment Amount", "% ASC Procedures", "% ASC Billing" ]
@@ -325,7 +325,7 @@ df_counties_summary = df_counties_summary.loc[sorted_moran_values_all]
 # ## Create a more presentable format
 # Select out only the columns you want and rename the columns
 
-# In[27]:
+# In[26]:
 
 
 key_cols={

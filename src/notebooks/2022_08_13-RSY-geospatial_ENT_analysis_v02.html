@@ -3,7 +3,7 @@
 <head><meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>2022_08_13-RSY-geospatial_analysis_v02</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>2022_08_13-RSY-geospatial_ENT_analysis_v02</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
 
 
@@ -14270,7 +14270,7 @@ a.anchor-link {
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[18]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[1]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="c1">#@title ## Base imports</span>
@@ -14297,13 +14297,13 @@ a.anchor-link {
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[22]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="c1">#@title ## Option 1) Mount google drive and import my code</span>
 
 <span class="n">mountpoint_folder_name</span> <span class="o">=</span> <span class="s2">&quot;gdrive&quot;</span>  <span class="c1"># can be anything, doesn&#39;t have to be &quot;drive&quot;</span>
-<span class="n">project_path_within_drive</span> <span class="o">=</span> <span class="s2">&quot;PythonProjects/GeospatialAnalysis&quot;</span> <span class="c1">#@param {type:&quot;string&quot;}</span>
+<span class="n">project_path_within_drive</span> <span class="o">=</span> <span class="s2">&quot;PythonProjects/GeospatialAnalysis/src&quot;</span> <span class="c1">#@param {type:&quot;string&quot;}</span>
 <span class="n">project_path_full</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;/content/&quot;</span><span class="p">,</span><span class="n">mountpoint_folder_name</span><span class="p">,</span>
                         <span class="s2">&quot;MyDrive&quot;</span><span class="p">,</span><span class="n">project_path_within_drive</span><span class="p">)</span>
 <span class="k">try</span><span class="p">:</span>
@@ -14344,7 +14344,7 @@ a.anchor-link {
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
 <pre>/root
 Mounted at /content/gdrive
-/content/gdrive/.shortcut-targets-by-id/1okL5s1HTQUWqKodPSVNP_RsK0o81IH5E/PythonProjects/GeospatialAnalysis
+/content/gdrive/MyDrive/Computer Backups/Rahul Yerrabelli drive/PythonProjects/GeospatialAnalysis/src
 </pre>
 </div>
 </div>
@@ -14356,14 +14356,14 @@ Mounted at /content/gdrive
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[2]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="c1">#@title ## Option 2) Clone project files from GitHub</span>
 
 <span class="err">!</span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">ryerrabelli</span><span class="o">/</span><span class="n">GeospatialAnalysis</span><span class="o">.</span><span class="n">git</span>
 
-<span class="n">project_path_full</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;/content/&quot;</span><span class="p">,</span><span class="s2">&quot;GeospatialAnalysis&quot;</span><span class="p">)</span>
+<span class="n">project_path_full</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;/content/&quot;</span><span class="p">,</span><span class="s2">&quot;GeospatialAnalysis/src&quot;</span><span class="p">)</span>
 <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">project_path_full</span><span class="p">)</span>
 <span class="o">%</span><span class="n">cd</span> <span class="n">GeospatialAnalysis</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
@@ -14411,7 +14411,7 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[20]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[3]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">years</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span><span class="mi">2019</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
@@ -14501,7 +14501,7 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[22]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">df_procedures_orig</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;data/2022_05_05 sums and slopes ent with HCPCS descriptions.csv&quot;</span><span class="p">,</span> 
@@ -14531,7 +14531,7 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[23]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">df_procedures_clean</span> <span class="o">=</span> <span class="n">df_procedures_orig</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s2">&quot;HCPCS Code&quot;</span><span class="p">,</span> <span class="s2">&quot;HCPCS Description&quot;</span><span class="p">])</span>
@@ -14596,7 +14596,7 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[25]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[23]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="k">with</span> <span class="n">pd</span><span class="o">.</span><span class="n">option_context</span><span class="p">(</span><span class="s1">&#39;display.float_format&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:,.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">):</span>
@@ -14624,7 +14624,7 @@ Resolving deltas: 100% (75/75), done.
 
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
 
-  <div id="df-90ea60b3-2cea-44d5-b92d-d0c7f1ce9559">
+  <div id="df-340b7f07-9be4-4cf6-8c4c-f18c4f4a9d23">
     <div class="colab-df-container">
       <div>
 <style scoped>
@@ -16043,7 +16043,7 @@ Resolving deltas: 100% (75/75), done.
 </table>
 <p>53 rows × 22 columns</p>
 </div>
-      <button class="colab-df-convert" onclick="convertToInteractive('df-90ea60b3-2cea-44d5-b92d-d0c7f1ce9559')"
+      <button class="colab-df-convert" onclick="convertToInteractive('df-340b7f07-9be4-4cf6-8c4c-f18c4f4a9d23')"
               title="Convert this dataframe to an interactive table."
               style="display:none;">
         
@@ -16094,12 +16094,12 @@ Resolving deltas: 100% (75/75), done.
 
       <script>
         const buttonEl =
-          document.querySelector('#df-90ea60b3-2cea-44d5-b92d-d0c7f1ce9559 button.colab-df-convert');
+          document.querySelector('#df-340b7f07-9be4-4cf6-8c4c-f18c4f4a9d23 button.colab-df-convert');
         buttonEl.style.display =
           google.colab.kernel.accessAllowed ? 'block' : 'none';
 
         async function convertToInteractive(key) {
-          const element = document.querySelector('#df-90ea60b3-2cea-44d5-b92d-d0c7f1ce9559');
+          const element = document.querySelector('#df-340b7f07-9be4-4cf6-8c4c-f18c4f4a9d23');
           const dataTable =
             await google.colab.kernel.invokeFunction('convertToInteractive',
                                                      [key], {});
@@ -16140,7 +16140,7 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[7]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="c1"># @title Load spatial coordinates of counties</span>
@@ -16157,7 +16157,7 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[8]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="c1"># @title Load conversion df between FIPS code and county string</span>
@@ -16172,7 +16172,7 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[9]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="c1"># @title Load our ENT df of all counties, their info, and the Moran&#39;s analysis</span>
@@ -16188,7 +16188,7 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[7]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[10]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="c1"># Merge with the fips 2 county standard data set</span>
@@ -16205,7 +16205,7 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[16]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[11]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">info_simple</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;FIPS&quot;</span><span class="p">,</span> <span class="s2">&quot;CountyName&quot;</span><span class="p">,</span><span class="s2">&quot;StateAbbr&quot;</span><span class="p">,</span> <span class="s2">&quot;% ASC Billing&quot;</span><span class="p">,</span> <span class="s2">&quot;Moran I score for ACS billing fraction&quot;</span><span class="p">]</span>
@@ -16238,7 +16238,7 @@ Resolving deltas: 100% (75/75), done.
 
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
 
-  <div id="df-4470725d-99d0-45aa-aecb-5aea3cd1a6c1">
+  <div id="df-4aef9ae1-5551-43a9-a964-8674fde1571c">
     <div class="colab-df-container">
       <div>
 <style scoped>
@@ -16294,7 +16294,7 @@ Resolving deltas: 100% (75/75), done.
 </table>
 <p>941 rows × 5 columns</p>
 </div>
-      <button class="colab-df-convert" onclick="convertToInteractive('df-4470725d-99d0-45aa-aecb-5aea3cd1a6c1')"
+      <button class="colab-df-convert" onclick="convertToInteractive('df-4aef9ae1-5551-43a9-a964-8674fde1571c')"
               title="Convert this dataframe to an interactive table."
               style="display:none;">
         
@@ -16345,12 +16345,12 @@ Resolving deltas: 100% (75/75), done.
 
       <script>
         const buttonEl =
-          document.querySelector('#df-4470725d-99d0-45aa-aecb-5aea3cd1a6c1 button.colab-df-convert');
+          document.querySelector('#df-4aef9ae1-5551-43a9-a964-8674fde1571c button.colab-df-convert');
         buttonEl.style.display =
           google.colab.kernel.accessAllowed ? 'block' : 'none';
 
         async function convertToInteractive(key) {
-          const element = document.querySelector('#df-4470725d-99d0-45aa-aecb-5aea3cd1a6c1');
+          const element = document.querySelector('#df-4aef9ae1-5551-43a9-a964-8674fde1571c');
           const dataTable =
             await google.colab.kernel.invokeFunction('convertToInteractive',
                                                      [key], {});
@@ -16383,7 +16383,7 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="Create-long-df-from-wide-df--i.e.-separate-out-the-year-columns-into-different-rows">Create long df from wide df- i.e. separate out the year columns into different rows<a class="anchor-link" href="#Create-long-df-from-wide-df--i.e.-separate-out-the-year-columns-into-different-rows">&#182;</a></h2>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[12]:</div>
@@ -16421,425 +16421,15 @@ Resolving deltas: 100% (75/75), done.
 </div>
 </div>
 
-<div class="jp-Cell-outputWrapper">
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-
-  <div id="df-0ea793d3-157a-404b-b2be-f7be44e67012">
-    <div class="colab-df-container">
-      <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>FIPS</th>
-      <th>County_St</th>
-      <th>Year</th>
-      <th>Total Number of Services: in Year</th>
-      <th>Total Medicare Payment Amount: in Year</th>
-      <th>% ASC Procedures: in Year</th>
-      <th>% ASC Billing: in Year</th>
-      <th>Total Number of Services</th>
-      <th>Total Medicare Payment Amount</th>
-      <th>tot_ratio</th>
-      <th>...</th>
-      <th>Medicare Population Density</th>
-      <th>Moran I score for ACS billing fraction</th>
-      <th>County</th>
-      <th>StateFIPS</th>
-      <th>CountyFIPS_3</th>
-      <th>CountyName</th>
-      <th>StateName</th>
-      <th>CountyFIPS</th>
-      <th>StateAbbr</th>
-      <th>STATE_COUNTY</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>4320</th>
-      <td>01003</td>
-      <td>Baldwin, AL</td>
-      <td>2019</td>
-      <td>50.0</td>
-      <td>4107.68</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>524.0</td>
-      <td>29853.60</td>
-      <td>15.0</td>
-      <td>...</td>
-      <td>29.847074</td>
-      <td>Low-High</td>
-      <td>Baldwin</td>
-      <td>01</td>
-      <td>003</td>
-      <td>Baldwin</td>
-      <td>Alabama</td>
-      <td>01003</td>
-      <td>AL</td>
-      <td>AL | BALDWIN</td>
-    </tr>
-    <tr>
-      <th>2438</th>
-      <td>01003</td>
-      <td>Baldwin, AL</td>
-      <td>2017</td>
-      <td>236.0</td>
-      <td>12883.73</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>524.0</td>
-      <td>29853.60</td>
-      <td>15.0</td>
-      <td>...</td>
-      <td>29.847074</td>
-      <td>Low-High</td>
-      <td>Baldwin</td>
-      <td>01</td>
-      <td>003</td>
-      <td>Baldwin</td>
-      <td>Alabama</td>
-      <td>01003</td>
-      <td>AL</td>
-      <td>AL | BALDWIN</td>
-    </tr>
-    <tr>
-      <th>556</th>
-      <td>01003</td>
-      <td>Baldwin, AL</td>
-      <td>2015</td>
-      <td>0.0</td>
-      <td>0.00</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>524.0</td>
-      <td>29853.60</td>
-      <td>15.0</td>
-      <td>...</td>
-      <td>29.847074</td>
-      <td>Low-High</td>
-      <td>Baldwin</td>
-      <td>01</td>
-      <td>003</td>
-      <td>Baldwin</td>
-      <td>Alabama</td>
-      <td>01003</td>
-      <td>AL</td>
-      <td>AL | BALDWIN</td>
-    </tr>
-    <tr>
-      <th>3379</th>
-      <td>01003</td>
-      <td>Baldwin, AL</td>
-      <td>2018</td>
-      <td>238.0</td>
-      <td>12862.19</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>524.0</td>
-      <td>29853.60</td>
-      <td>15.0</td>
-      <td>...</td>
-      <td>29.847074</td>
-      <td>Low-High</td>
-      <td>Baldwin</td>
-      <td>01</td>
-      <td>003</td>
-      <td>Baldwin</td>
-      <td>Alabama</td>
-      <td>01003</td>
-      <td>AL</td>
-      <td>AL | BALDWIN</td>
-    </tr>
-    <tr>
-      <th>1497</th>
-      <td>01003</td>
-      <td>Baldwin, AL</td>
-      <td>2016</td>
-      <td>0.0</td>
-      <td>0.00</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>524.0</td>
-      <td>29853.60</td>
-      <td>15.0</td>
-      <td>...</td>
-      <td>29.847074</td>
-      <td>Low-High</td>
-      <td>Baldwin</td>
-      <td>01</td>
-      <td>003</td>
-      <td>Baldwin</td>
-      <td>Alabama</td>
-      <td>01003</td>
-      <td>AL</td>
-      <td>AL | BALDWIN</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>4464</th>
-      <td>56041</td>
-      <td>Uinta, WY</td>
-      <td>2019</td>
-      <td>179.0</td>
-      <td>65588.66</td>
-      <td>43.016760</td>
-      <td>72.010649</td>
-      <td>347.0</td>
-      <td>92886.86</td>
-      <td>17.0</td>
-      <td>...</td>
-      <td>1.412219</td>
-      <td>Non Significant</td>
-      <td>Uinta</td>
-      <td>56</td>
-      <td>041</td>
-      <td>Uinta</td>
-      <td>Wyoming</td>
-      <td>56041</td>
-      <td>WY</td>
-      <td>WY | UINTA</td>
-    </tr>
-    <tr>
-      <th>1641</th>
-      <td>56041</td>
-      <td>Uinta, WY</td>
-      <td>2016</td>
-      <td>51.0</td>
-      <td>9390.43</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>347.0</td>
-      <td>92886.86</td>
-      <td>17.0</td>
-      <td>...</td>
-      <td>1.412219</td>
-      <td>Non Significant</td>
-      <td>Uinta</td>
-      <td>56</td>
-      <td>041</td>
-      <td>Uinta</td>
-      <td>Wyoming</td>
-      <td>56041</td>
-      <td>WY</td>
-      <td>WY | UINTA</td>
-    </tr>
-    <tr>
-      <th>700</th>
-      <td>56041</td>
-      <td>Uinta, WY</td>
-      <td>2015</td>
-      <td>36.0</td>
-      <td>2867.29</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>347.0</td>
-      <td>92886.86</td>
-      <td>17.0</td>
-      <td>...</td>
-      <td>1.412219</td>
-      <td>Non Significant</td>
-      <td>Uinta</td>
-      <td>56</td>
-      <td>041</td>
-      <td>Uinta</td>
-      <td>Wyoming</td>
-      <td>56041</td>
-      <td>WY</td>
-      <td>WY | UINTA</td>
-    </tr>
-    <tr>
-      <th>3523</th>
-      <td>56041</td>
-      <td>Uinta, WY</td>
-      <td>2018</td>
-      <td>34.0</td>
-      <td>5826.04</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>347.0</td>
-      <td>92886.86</td>
-      <td>17.0</td>
-      <td>...</td>
-      <td>1.412219</td>
-      <td>Non Significant</td>
-      <td>Uinta</td>
-      <td>56</td>
-      <td>041</td>
-      <td>Uinta</td>
-      <td>Wyoming</td>
-      <td>56041</td>
-      <td>WY</td>
-      <td>WY | UINTA</td>
-    </tr>
-    <tr>
-      <th>2582</th>
-      <td>56041</td>
-      <td>Uinta, WY</td>
-      <td>2017</td>
-      <td>47.0</td>
-      <td>9214.44</td>
-      <td>25.531915</td>
-      <td>72.933569</td>
-      <td>347.0</td>
-      <td>92886.86</td>
-      <td>17.0</td>
-      <td>...</td>
-      <td>1.412219</td>
-      <td>Non Significant</td>
-      <td>Uinta</td>
-      <td>56</td>
-      <td>041</td>
-      <td>Uinta</td>
-      <td>Wyoming</td>
-      <td>56041</td>
-      <td>WY</td>
-      <td>WY | UINTA</td>
-    </tr>
-  </tbody>
-</table>
-<p>4705 rows × 65 columns</p>
-</div>
-      <button class="colab-df-convert" onclick="convertToInteractive('df-0ea793d3-157a-404b-b2be-f7be44e67012')"
-              title="Convert this dataframe to an interactive table."
-              style="display:none;">
-        
-  <svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
-       width="24px">
-    <path d="M0 0h24v24H0V0z" fill="none"/>
-    <path d="M18.56 5.44l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94zm-11 1L8.5 8.5l.94-2.06 2.06-.94-2.06-.94L8.5 2.5l-.94 2.06-2.06.94zm10 10l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94z"/><path d="M17.41 7.96l-1.37-1.37c-.4-.4-.92-.59-1.43-.59-.52 0-1.04.2-1.43.59L10.3 9.45l-7.72 7.72c-.78.78-.78 2.05 0 2.83L4 21.41c.39.39.9.59 1.41.59.51 0 1.02-.2 1.41-.59l7.78-7.78 2.81-2.81c.8-.78.8-2.07 0-2.86zM5.41 20L4 18.59l7.72-7.72 1.47 1.35L5.41 20z"/>
-  </svg>
-      </button>
-      
-  <style>
-    .colab-df-container {
-      display:flex;
-      flex-wrap:wrap;
-      gap: 12px;
-    }
-
-    .colab-df-convert {
-      background-color: #E8F0FE;
-      border: none;
-      border-radius: 50%;
-      cursor: pointer;
-      display: none;
-      fill: #1967D2;
-      height: 32px;
-      padding: 0 0 0 0;
-      width: 32px;
-    }
-
-    .colab-df-convert:hover {
-      background-color: #E2EBFA;
-      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
-      fill: #174EA6;
-    }
-
-    [theme=dark] .colab-df-convert {
-      background-color: #3B4455;
-      fill: #D2E3FC;
-    }
-
-    [theme=dark] .colab-df-convert:hover {
-      background-color: #434B5C;
-      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
-      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
-      fill: #FFFFFF;
-    }
-  </style>
-
-      <script>
-        const buttonEl =
-          document.querySelector('#df-0ea793d3-157a-404b-b2be-f7be44e67012 button.colab-df-convert');
-        buttonEl.style.display =
-          google.colab.kernel.accessAllowed ? 'block' : 'none';
-
-        async function convertToInteractive(key) {
-          const element = document.querySelector('#df-0ea793d3-157a-404b-b2be-f7be44e67012');
-          const dataTable =
-            await google.colab.kernel.invokeFunction('convertToInteractive',
-                                                     [key], {});
-          if (!dataTable) return;
-
-          const docLinkHtml = 'Like what you see? Visit the ' +
-            '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
-            + ' to learn more about interactive tables.';
-          element.innerHTML = '';
-          dataTable['output_type'] = 'display_data';
-          await google.colab.output.renderOutput(dataTable, element);
-          const docLink = document.createElement('div');
-          docLink.innerHTML = docLinkHtml;
-          element.appendChild(docLink);
-        }
-      </script>
-    </div>
-  </div>
-  
-</div>
-
-</div>
-
-</div>
-
-</div>
-
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="Create-summary-data-by-Moran-category">Create summary data by Moran category<a class="anchor-link" href="#Create-summary-data-by-Moran-category">&#182;</a></h2>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[15]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[13]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">categories</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Total Number of Services&quot;</span><span class="p">,</span><span class="s2">&quot;Total Medicare Payment Amount&quot;</span><span class="p">,</span> <span class="s2">&quot;% ASC Procedures&quot;</span><span class="p">,</span> <span class="s2">&quot;% ASC Billing&quot;</span> <span class="p">]</span>
@@ -16879,275 +16469,6 @@ Resolving deltas: 100% (75/75), done.
 </div>
 </div>
 
-<div class="jp-Cell-outputWrapper">
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
-
-  <div id="df-cb2f8a36-43c9-4635-a21e-6ec7b1e9be02">
-    <div class="colab-df-container">
-      <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th></th>
-      <th>tot_ratio</th>
-      <th>Beneficiaries with Part A and Part B</th>
-      <th>Average Age</th>
-      <th>Percent Male</th>
-      <th>Percent Non-Hispanic White</th>
-      <th>Percent African American</th>
-      <th>Percent Hispanic</th>
-      <th>Percent Eligible for Medicaid</th>
-      <th>Average HCC Score</th>
-      <th>Hospital Readmission Rate</th>
-      <th>...</th>
-      <th>Medicare Population Density</th>
-      <th>Total Number of Services: Mean</th>
-      <th>Total Number of Services: Slope</th>
-      <th>Total Medicare Payment Amount: Mean</th>
-      <th>Total Medicare Payment Amount: Slope</th>
-      <th>% ASC Procedures: Mean</th>
-      <th>% ASC Procedures: Slope</th>
-      <th>% ASC Billing: Mean</th>
-      <th>% ASC Billing: Slope</th>
-      <th>N</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th rowspan="3" valign="top">High-High</th>
-      <th>10%</th>
-      <td>13.90</td>
-      <td>15,823.74</td>
-      <td>71.00</td>
-      <td>42.93</td>
-      <td>63.48</td>
-      <td>1.32</td>
-      <td>0.93</td>
-      <td>9.93</td>
-      <td>0.91</td>
-      <td>15.22</td>
-      <td>...</td>
-      <td>20.49</td>
-      <td>54.38</td>
-      <td>-115.49</td>
-      <td>16,018.24</td>
-      <td>-22,898.25</td>
-      <td>17.44</td>
-      <td>-6.74</td>
-      <td>37.72</td>
-      <td>-4.89</td>
-      <td>90.00</td>
-    </tr>
-    <tr>
-      <th>mean</th>
-      <td>103.18</td>
-      <td>91,698.25</td>
-      <td>72.41</td>
-      <td>44.69</td>
-      <td>80.69</td>
-      <td>8.87</td>
-      <td>5.83</td>
-      <td>16.61</td>
-      <td>1.00</td>
-      <td>17.72</td>
-      <td>...</td>
-      <td>134.04</td>
-      <td>1,159.12</td>
-      <td>66.53</td>
-      <td>218,757.69</td>
-      <td>11,281.08</td>
-      <td>51.27</td>
-      <td>1.34</td>
-      <td>69.28</td>
-      <td>1.44</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>90%</th>
-      <td>200.31</td>
-      <td>143,264.70</td>
-      <td>74.00</td>
-      <td>46.80</td>
-      <td>92.80</td>
-      <td>19.75</td>
-      <td>14.06</td>
-      <td>23.62</td>
-      <td>1.11</td>
-      <td>20.38</td>
-      <td>...</td>
-      <td>265.73</td>
-      <td>1,185.06</td>
-      <td>54.78</td>
-      <td>439,851.70</td>
-      <td>26,467.42</td>
-      <td>80.33</td>
-      <td>9.26</td>
-      <td>90.97</td>
-      <td>8.11</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th rowspan="2" valign="top">Low-Low</th>
-      <th>10%</th>
-      <td>2.76</td>
-      <td>8,175.44</td>
-      <td>68.80</td>
-      <td>44.12</td>
-      <td>77.03</td>
-      <td>0.31</td>
-      <td>0.29</td>
-      <td>15.45</td>
-      <td>0.90</td>
-      <td>15.04</td>
-      <td>...</td>
-      <td>10.74</td>
-      <td>8.72</td>
-      <td>-193.22</td>
-      <td>798.98</td>
-      <td>-11,950.69</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>139.00</td>
-    </tr>
-    <tr>
-      <th>mean</th>
-      <td>48.77</td>
-      <td>26,068.30</td>
-      <td>70.37</td>
-      <td>45.95</td>
-      <td>88.03</td>
-      <td>4.13</td>
-      <td>1.22</td>
-      <td>23.85</td>
-      <td>0.99</td>
-      <td>17.82</td>
-      <td>...</td>
-      <td>59.85</td>
-      <td>509.23</td>
-      <td>-36.53</td>
-      <td>32,316.77</td>
-      <td>-1,522.32</td>
-      <td>0.45</td>
-      <td>-0.05</td>
-      <td>1.12</td>
-      <td>0.03</td>
-      <td>NaN</td>
-    </tr>
-  </tbody>
-</table>
-<p>5 rows × 54 columns</p>
-</div>
-      <button class="colab-df-convert" onclick="convertToInteractive('df-cb2f8a36-43c9-4635-a21e-6ec7b1e9be02')"
-              title="Convert this dataframe to an interactive table."
-              style="display:none;">
-        
-  <svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
-       width="24px">
-    <path d="M0 0h24v24H0V0z" fill="none"/>
-    <path d="M18.56 5.44l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94zm-11 1L8.5 8.5l.94-2.06 2.06-.94-2.06-.94L8.5 2.5l-.94 2.06-2.06.94zm10 10l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94z"/><path d="M17.41 7.96l-1.37-1.37c-.4-.4-.92-.59-1.43-.59-.52 0-1.04.2-1.43.59L10.3 9.45l-7.72 7.72c-.78.78-.78 2.05 0 2.83L4 21.41c.39.39.9.59 1.41.59.51 0 1.02-.2 1.41-.59l7.78-7.78 2.81-2.81c.8-.78.8-2.07 0-2.86zM5.41 20L4 18.59l7.72-7.72 1.47 1.35L5.41 20z"/>
-  </svg>
-      </button>
-      
-  <style>
-    .colab-df-container {
-      display:flex;
-      flex-wrap:wrap;
-      gap: 12px;
-    }
-
-    .colab-df-convert {
-      background-color: #E8F0FE;
-      border: none;
-      border-radius: 50%;
-      cursor: pointer;
-      display: none;
-      fill: #1967D2;
-      height: 32px;
-      padding: 0 0 0 0;
-      width: 32px;
-    }
-
-    .colab-df-convert:hover {
-      background-color: #E2EBFA;
-      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
-      fill: #174EA6;
-    }
-
-    [theme=dark] .colab-df-convert {
-      background-color: #3B4455;
-      fill: #D2E3FC;
-    }
-
-    [theme=dark] .colab-df-convert:hover {
-      background-color: #434B5C;
-      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
-      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
-      fill: #FFFFFF;
-    }
-  </style>
-
-      <script>
-        const buttonEl =
-          document.querySelector('#df-cb2f8a36-43c9-4635-a21e-6ec7b1e9be02 button.colab-df-convert');
-        buttonEl.style.display =
-          google.colab.kernel.accessAllowed ? 'block' : 'none';
-
-        async function convertToInteractive(key) {
-          const element = document.querySelector('#df-cb2f8a36-43c9-4635-a21e-6ec7b1e9be02');
-          const dataTable =
-            await google.colab.kernel.invokeFunction('convertToInteractive',
-                                                     [key], {});
-          if (!dataTable) return;
-
-          const docLinkHtml = 'Like what you see? Visit the ' +
-            '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
-            + ' to learn more about interactive tables.';
-          element.innerHTML = '';
-          dataTable['output_type'] = 'display_data';
-          await google.colab.output.renderOutput(dataTable, element);
-          const docLink = document.createElement('div');
-          docLink.innerHTML = docLinkHtml;
-          element.appendChild(docLink);
-        }
-      </script>
-    </div>
-  </div>
-  
-</div>
-
-</div>
-
-</div>
-
-</div>
-
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
@@ -17157,7 +16478,7 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[27]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[26]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">key_cols</span><span class="o">=</span><span class="p">{</span>
@@ -17217,7 +16538,7 @@ Resolving deltas: 100% (75/75), done.
 
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
 
-  <div id="df-a47da892-f487-4739-9a72-6afad943725a">
+  <div id="df-e7126235-53d5-4e41-a17e-15dbc63e9727">
     <div class="colab-df-container">
       <div>
 <style scoped>
@@ -17795,7 +17116,7 @@ Resolving deltas: 100% (75/75), done.
   </tbody>
 </table>
 </div>
-      <button class="colab-df-convert" onclick="convertToInteractive('df-a47da892-f487-4739-9a72-6afad943725a')"
+      <button class="colab-df-convert" onclick="convertToInteractive('df-e7126235-53d5-4e41-a17e-15dbc63e9727')"
               title="Convert this dataframe to an interactive table."
               style="display:none;">
         
@@ -17846,12 +17167,12 @@ Resolving deltas: 100% (75/75), done.
 
       <script>
         const buttonEl =
-          document.querySelector('#df-a47da892-f487-4739-9a72-6afad943725a button.colab-df-convert');
+          document.querySelector('#df-e7126235-53d5-4e41-a17e-15dbc63e9727 button.colab-df-convert');
         buttonEl.style.display =
           google.colab.kernel.accessAllowed ? 'block' : 'none';
 
         async function convertToInteractive(key) {
-          const element = document.querySelector('#df-a47da892-f487-4739-9a72-6afad943725a');
+          const element = document.querySelector('#df-e7126235-53d5-4e41-a17e-15dbc63e9727');
           const dataTable =
             await google.colab.kernel.invokeFunction('convertToInteractive',
                                                      [key], {});
