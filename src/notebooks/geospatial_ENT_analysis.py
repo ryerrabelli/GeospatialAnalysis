@@ -3,13 +3,13 @@
 
 # # Pip install the non-common modules
 
-# In[1]:
+# In[ ]:
 
 
 get_ipython().system('pip install -U kaleido   # kaleido required for saving the plotly figures into static images')
 
 
-# In[2]:
+# In[ ]:
 
 
 get_ipython().system('pip install geopandas --quiet')
@@ -26,7 +26,7 @@ get_ipython().run_line_magic('watermark', '-d -m -v -p numpy,matplotlib,sklearn,
 
 # # Set up
 
-# In[97]:
+# In[ ]:
 
 
 #@title ## Base imports
@@ -106,7 +106,7 @@ def save_figure(fig, file_name:str, animated=False):
 
 # ## Load geojson data
 
-# In[7]:
+# In[ ]:
 
 
 from urllib.request import urlopen
@@ -124,21 +124,21 @@ for k,v in counties.items():
 
 # ## Test
 
-# In[13]:
+# In[ ]:
 
 
 dfA = pd.read_csv("data/2022_04_10 ent initial output.csv", dtype={"FIPS": str})  # gets per county info
 dfB = pd.read_csv("data/2022_05_05 sums and slopes ent.csv", dtype={"HCPCS Code": str})  # gets per healthcare code info
 
 
-# In[9]:
+# In[ ]:
 
 
 display(dfA.info())
 display(dfB.info())
 
 
-# In[12]:
+# In[ ]:
 
 
 dfB["HCPCS Code"]
@@ -156,7 +156,7 @@ for ind in range(max(len(dfA.columns),len(dfB.columns))):
 # ## Load ENT county df (specifically wide-type df) from csv file
 # To understand what is meant by long type and wife type dataframes, see https://towardsdatascience.com/visualization-with-plotly-express-comprehensive-guide-eb5ee4b50b57
 
-# In[42]:
+# In[ ]:
 
 
 df_bill_orig = pd.read_csv("data/2022_05_05 sums and slopes ent with HCPCS descriptions.csv", 
@@ -167,13 +167,13 @@ df_bill_orig = pd.read_csv("data/2022_05_05 sums and slopes ent with HCPCS descr
                                })  # gets per healthcare code info
 
 
-# In[50]:
+# In[ ]:
 
 
 df_bill_orig.head(2)
 
 
-# In[211]:
+# In[ ]:
 
 
 df_bill_wide = df_bill_orig.set_index(["HCPCS Code", "HCPCS Description"])
@@ -188,21 +188,21 @@ categories = df_bill_wide.columns.levels[0]  #["Total Number of Services", "Tota
 
 # The slope given in the csv file is actually the inverse slope. We need to either recalculate it or
 
-# In[212]:
+# In[ ]:
 
 
 def calc_slope(y, x):
-    a = scipy.stats.linregress(x, y=y)
-    return {"Slope":a.slope, "Pearson Coef":a.rvalue, "Intercept": a.intercept, "P":a.pvalue}
+    regress = scipy.stats.linregress(x, y=y)
+    return {"Slope": regress.slope, "Pearson Coef": regress.rvalue, "Intercept": regress.intercept, "P": regress.pvalue}
 
 
-# In[210]:
+# In[ ]:
 
 
+df_bill_wide.columns
 
 
-
-# In[214]:
+# In[ ]:
 
 
 for category in categories:
@@ -214,7 +214,13 @@ df_bill_wide = df_bill_wide[sorted(df_bill_wide.columns)]  # rearrange cols alph
 
 # ## Nick suppl table
 
-# In[73]:
+# In[ ]:
+
+
+df_bill_wide.shape[1]
+
+
+# In[ ]:
 
 
 df_bill_wide.loc[["14060",
@@ -238,26 +244,26 @@ df_bill_wide.loc[["14060",
 "31237"]]
 
 
-# In[72]:
+# In[ ]:
 
 
 df_bill_wide.loc[["31575","31237"]]
 
 
-# In[138]:
+# In[ ]:
 
 
 A = sklearn.linear_model.LinearRegression()
 B = A.fit(np.arange(2015,2019+1).reshape(-1,1), df_bill_wide.loc["14060"][("Total Number of Services","Annual")].values.reshape(-1,1) )
 
 
-# In[137]:
+# In[ ]:
 
 
 B.coef_, B.intercept_
 
 
-# In[131]:
+# In[ ]:
 
 
 import statsmodels.api as sm
@@ -269,7 +275,7 @@ import statsmodels.api as sm
 df_bill_wide[(category,"Annual")].apply(calc_slope,axis=1, result_type="expand", args=(np.arange(2015,2019+1),) )
 
 
-# In[134]:
+# In[ ]:
 
 
 X = sm.add_constant(np.arange(2015,2019+1)) # adding a constant
@@ -281,7 +287,7 @@ predictions = model.predict(X)
 print_model = model.summary()
 
 
-# In[135]:
+# In[ ]:
 
 
 print_model
@@ -289,14 +295,14 @@ print_model
 
 # ## Data
 
-# In[206]:
+# In[ ]:
 
 
 with pd.option_context('display.float_format', '{:,.2f}'.format):
     display(df_bill_wide)
 
 
-# In[67]:
+# In[ ]:
 
 
 print("Total amount of services")
@@ -309,7 +315,7 @@ print("{:,}".format(A2))
 print("{:,}".format(A2/5))
 
 
-# In[24]:
+# In[ ]:
 
 
 pd.columns = pd.MultiIndex.from_tuples([tuple(col.split(":")) if ":" in col else (col,"") for col in df_bill_wide.columns])
