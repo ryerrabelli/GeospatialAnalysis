@@ -3,7 +3,7 @@
 <head><meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>2022_08_13-RSY-geospatial_ENT_analysis_v02</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>2022_11_20-RSY-geospatial_ENT_analysis_v03</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
 
 
@@ -14297,7 +14297,7 @@ a.anchor-link {
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[9]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[2]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="c1">#@title ## Option 1) Mount google drive and import my code</span>
@@ -14344,7 +14344,7 @@ a.anchor-link {
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
 <pre>/root
 Mounted at /content/gdrive
-/content/gdrive/MyDrive/Computer Backups/Rahul Yerrabelli drive/PythonProjects/GeospatialAnalysis
+/content/gdrive/.shortcut-targets-by-id/1okL5s1HTQUWqKodPSVNP_RsK0o81IH5E/PythonProjects/GeospatialAnalysis
 </pre>
 </div>
 </div>
@@ -14411,7 +14411,7 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[12]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[3]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">years</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span><span class="mi">2019</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
@@ -14501,7 +14501,7 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">df_procedures_orig</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;data/2022_05_05 sums and slopes ent with HCPCS descriptions.csv&quot;</span><span class="p">,</span> 
@@ -14531,7 +14531,7 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">df_procedures_clean</span> <span class="o">=</span> <span class="n">df_procedures_orig</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s2">&quot;HCPCS Code&quot;</span><span class="p">,</span> <span class="s2">&quot;HCPCS Description&quot;</span><span class="p">])</span>
@@ -14583,8 +14583,8 @@ Resolving deltas: 100% (75/75), done.
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>/usr/local/lib/python3.7/dist-packages/ipykernel/kernelbase.py:399: PerformanceWarning: indexing past lexsort depth may impact performance.
-  user_expressions, allow_stdin)
+<pre>/usr/local/lib/python3.7/dist-packages/IPython/core/interactiveshell.py:2855: PerformanceWarning: indexing past lexsort depth may impact performance.
+  raw_cell, store_history, silent, shell_futures)
 </pre>
 </div>
 </div>
@@ -16140,7 +16140,7 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="c1"># @title Load spatial coordinates of counties</span>
@@ -16157,7 +16157,7 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[10]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[7]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="c1"># @title Load conversion df between FIPS code and county string</span>
@@ -16172,7 +16172,7 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[11]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[8]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="c1"># @title Load our ENT df of all counties, their info, and the Moran&#39;s analysis</span>
@@ -16188,7 +16188,7 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[19]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">df_counties_wide_orig</span><span class="o">.</span><span class="n">columns</span>
@@ -16207,7 +16207,7 @@ Resolving deltas: 100% (75/75), done.
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[19]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[&nbsp;]:</div>
 
 
 
@@ -16254,13 +16254,37 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[13]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[108]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-python"><pre><span></span><span class="c1"># Merge with the fips 2 county standard data set</span>
+<div class=" highlight hl-python"><pre><span></span><span class="c1"># @title Merge with the fips 2 county standard data set</span>
 <span class="n">df_counties_wide</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="n">df_counties_wide_orig</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="n">fips2county</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">left_on</span><span class="o">=</span><span class="s1">&#39;FIPS&#39;</span><span class="p">,</span> <span class="n">right_on</span><span class="o">=</span><span class="s1">&#39;CountyFIPS&#39;</span><span class="p">)</span>
 <span class="c1"># Insert a county &quot;County, ST&quot; col (i.e. &quot;Monmouth, NJ&quot; or &quot;Champaign, IL&quot;) for ease</span>
 <span class="n">df_counties_wide</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;County_St&quot;</span><span class="p">,</span> <span class="n">df_counties_wide</span><span class="p">[</span><span class="s2">&quot;CountyName&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span> <span class="o">+</span> <span class="n">df_counties_wide</span><span class="p">[</span><span class="s2">&quot;StateAbbr&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">))</span>
+
+<span class="n">cols_renamed</span><span class="o">=</span><span class="p">{</span>
+    <span class="s2">&quot;Average Age&quot;</span><span class="p">:</span> <span class="s2">&quot;Average Age (years)&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;Percent Male&#39;</span><span class="p">:</span> <span class="s2">&quot;% Male&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;Percent Non-Hispanic White&#39;</span><span class="p">:</span> <span class="s2">&quot;% Non-Hispanic White&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;Percent African American&#39;</span><span class="p">:</span> <span class="s2">&quot;% African American&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;Percent Hispanic&#39;</span><span class="p">:</span> <span class="s2">&quot;% Hispanic&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;Percent Eligible for Medicaid&#39;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">% E</span><span class="s2">ligible for Medicaid&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;pct_poverty&#39;</span><span class="p">:</span> <span class="s2">&quot;% Poverty&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;median_house_income&#39;</span><span class="p">:</span> <span class="s2">&quot;Median Household Income&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Pct_wthout_high_diploma&quot;</span><span class="p">:</span> <span class="s2">&quot;% without High School Graduation&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;unemployment&#39;</span><span class="p">:</span> <span class="s2">&quot;Unemployment Rate&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;pct_uninsured&#39;</span><span class="p">:</span> <span class="s2">&quot;% Uninsured&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;tabacco&#39;</span><span class="p">:</span> <span class="s2">&quot;% Tobacco Use&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;obesity&#39;</span><span class="p">:</span> <span class="s2">&quot;% Obesity&quot;</span><span class="p">,</span>
+    <span class="c1">#&quot;Asthma&quot;: &quot;% with Asthma&quot;,</span>
+    <span class="s1">&#39;2013_Rural_urban_cont_code&#39;</span><span class="p">:</span> <span class="s2">&quot;RUCA&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;pop&#39;</span><span class="p">:</span> <span class="s2">&quot;Overall Population&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;Beneficiaries with Part A and Part B&#39;</span><span class="p">:</span> <span class="s2">&quot;Medicare Beneficiaries Population&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;Population Density&#39;</span><span class="p">:</span> <span class="s2">&quot;Overall Population Density&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;Medicare Population Density&#39;</span><span class="p">:</span> <span class="s2">&quot;Medicare Population Density&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Moran I score for ACS billing fraction&quot;</span><span class="p">:</span>  <span class="s2">&quot;Moran I for ASC billing fraction&quot;</span><span class="p">,</span>  <span class="c1"># It is &quot;ASC&quot; not &quot;ACS&quot;</span>
+<span class="p">}</span>
+<span class="n">df_counties_wide</span> <span class="o">=</span> <span class="n">df_counties_wide</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">cols_renamed</span><span class="p">)</span>
 </pre></div>
 
      </div>
@@ -16271,11 +16295,11 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[14]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[109]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-python"><pre><span></span><span class="n">info_simple</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;FIPS&quot;</span><span class="p">,</span> <span class="s2">&quot;CountyName&quot;</span><span class="p">,</span><span class="s2">&quot;StateAbbr&quot;</span><span class="p">,</span> <span class="s2">&quot;% ASC Billing&quot;</span><span class="p">,</span> <span class="s2">&quot;Moran I score for ACS billing fraction&quot;</span><span class="p">]</span>
-<span class="n">info_main</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;FIPS&quot;</span><span class="p">,</span> <span class="s2">&quot;County&quot;</span><span class="p">,</span>	<span class="s2">&quot;StateFIPS&quot;</span><span class="p">,</span> <span class="s2">&quot;Total Medicare Payment Amount&quot;</span><span class="p">,</span> <span class="s2">&quot;% ASC Procedures&quot;</span><span class="p">,</span> <span class="s2">&quot;% ASC Billing&quot;</span><span class="p">,</span>	<span class="s2">&quot;CountyFIPS_3&quot;</span><span class="p">,</span>	<span class="s2">&quot;CountyName&quot;</span><span class="p">,</span>	<span class="s2">&quot;StateName&quot;</span><span class="p">,</span>	<span class="s2">&quot;CountyFIPS&quot;</span><span class="p">,</span>	<span class="s2">&quot;StateAbbr&quot;</span><span class="p">,</span>	<span class="s2">&quot;STATE_COUNTY&quot;</span><span class="p">]</span>
+<div class=" highlight hl-python"><pre><span></span><span class="n">info_simple</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;FIPS&quot;</span><span class="p">,</span> <span class="s2">&quot;CountyName&quot;</span><span class="p">,</span><span class="s2">&quot;StateAbbr&quot;</span><span class="p">,</span> <span class="s2">&quot;% ASC Billing&quot;</span><span class="p">]</span>
+<span class="n">info_main</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;FIPS&quot;</span><span class="p">,</span> <span class="s2">&quot;County&quot;</span><span class="p">,</span>	<span class="s2">&quot;StateFIPS&quot;</span><span class="p">,</span> <span class="s2">&quot;Total Medicare Payment Amount&quot;</span><span class="p">,</span> <span class="s2">&quot;% ASC Procedures&quot;</span><span class="p">,</span> <span class="s2">&quot;% ASC Billing&quot;</span><span class="p">,</span>	<span class="s2">&quot;CountyFIPS_3&quot;</span><span class="p">,</span>	<span class="s2">&quot;CountyName&quot;</span><span class="p">,</span>	<span class="s2">&quot;StateName&quot;</span><span class="p">,</span>	<span class="s2">&quot;CountyFIPS&quot;</span><span class="p">,</span>	<span class="s2">&quot;StateAbbr&quot;</span><span class="p">,</span>	<span class="s2">&quot;STATE_COUNTY&quot;</span><span class="p">,</span> <span class="s2">&quot;Moran I for ASC billing fraction&quot;</span><span class="p">]</span>
 
 <span class="n">df_counties_wide_simple</span><span class="o">=</span><span class="n">df_counties_wide</span><span class="p">[</span><span class="n">info_simple</span><span class="p">]</span>
 <span class="n">df_counties_wide_main</span><span class="o">=</span><span class="n">df_counties_wide</span><span class="p">[</span><span class="n">info_main</span><span class="p">]</span>
@@ -16304,7 +16328,7 @@ Resolving deltas: 100% (75/75), done.
 
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
 
-  <div id="df-63c1605a-757c-4581-93d0-ab063fa30aea">
+  <div id="df-dea6acda-193a-45d8-8840-ce847ff17259">
     <div class="colab-df-container">
       <div>
 <style scoped>
@@ -16328,7 +16352,6 @@ Resolving deltas: 100% (75/75), done.
       <th>CountyName</th>
       <th>StateAbbr</th>
       <th>% ASC Billing</th>
-      <th>Moran I score for ACS billing fraction</th>
     </tr>
   </thead>
   <tbody>
@@ -16338,11 +16361,9 @@ Resolving deltas: 100% (75/75), done.
       <td>Chambers</td>
       <td>AL</td>
       <td>0.000000</td>
-      <td>Non Significant</td>
     </tr>
     <tr>
       <th>...</th>
-      <td>...</td>
       <td>...</td>
       <td>...</td>
       <td>...</td>
@@ -16354,13 +16375,12 @@ Resolving deltas: 100% (75/75), done.
       <td>Chesterfield</td>
       <td>VA</td>
       <td>47.027037</td>
-      <td>Non Significant</td>
     </tr>
   </tbody>
 </table>
-<p>941 rows × 5 columns</p>
+<p>941 rows × 4 columns</p>
 </div>
-      <button class="colab-df-convert" onclick="convertToInteractive('df-63c1605a-757c-4581-93d0-ab063fa30aea')"
+      <button class="colab-df-convert" onclick="convertToInteractive('df-dea6acda-193a-45d8-8840-ce847ff17259')"
               title="Convert this dataframe to an interactive table."
               style="display:none;">
         
@@ -16411,12 +16431,12 @@ Resolving deltas: 100% (75/75), done.
 
       <script>
         const buttonEl =
-          document.querySelector('#df-63c1605a-757c-4581-93d0-ab063fa30aea button.colab-df-convert');
+          document.querySelector('#df-dea6acda-193a-45d8-8840-ce847ff17259 button.colab-df-convert');
         buttonEl.style.display =
           google.colab.kernel.accessAllowed ? 'block' : 'none';
 
         async function convertToInteractive(key) {
-          const element = document.querySelector('#df-63c1605a-757c-4581-93d0-ab063fa30aea');
+          const element = document.querySelector('#df-dea6acda-193a-45d8-8840-ce847ff17259');
           const dataTable =
             await google.colab.kernel.invokeFunction('convertToInteractive',
                                                      [key], {});
@@ -16452,7 +16472,7 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[15]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[110]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">col_categories</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Total Number of Services:&quot;</span><span class="p">,</span> <span class="s2">&quot;Total Medicare Payment Amount:&quot;</span><span class="p">,</span> <span class="s2">&quot;% ASC Procedures:&quot;</span><span class="p">,</span> <span class="s2">&quot;% ASC Billing:&quot;</span><span class="p">]</span>
@@ -16487,6 +16507,809 @@ Resolving deltas: 100% (75/75), done.
 </div>
 </div>
 
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[89]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-python"><pre><span></span><span class="n">df_counties_long</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[89]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+
+  <div id="df-6eb978bd-7747-441b-91ec-375e3f3e4e12">
+    <div class="colab-df-container">
+      <div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>FIPS</th>
+      <th>County_St</th>
+      <th>Year</th>
+      <th>Total Number of Services: in Year</th>
+      <th>Total Medicare Payment Amount: in Year</th>
+      <th>% ASC Procedures: in Year</th>
+      <th>% ASC Billing: in Year</th>
+      <th>Total Number of Services</th>
+      <th>Total Medicare Payment Amount</th>
+      <th>tot_ratio</th>
+      <th>...</th>
+      <th>Medicare Population Density</th>
+      <th>Moran I score for ACS billing fraction</th>
+      <th>County</th>
+      <th>StateFIPS</th>
+      <th>CountyFIPS_3</th>
+      <th>CountyName</th>
+      <th>StateName</th>
+      <th>CountyFIPS</th>
+      <th>StateAbbr</th>
+      <th>STATE_COUNTY</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>01017</td>
+      <td>Chambers, AL</td>
+      <td>2015</td>
+      <td>0.0</td>
+      <td>0.00</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>408.0</td>
+      <td>30064.800000</td>
+      <td>14.196990</td>
+      <td>...</td>
+      <td>14.230610</td>
+      <td>Non Significant</td>
+      <td>Chambers</td>
+      <td>01</td>
+      <td>017</td>
+      <td>Chambers</td>
+      <td>Alabama</td>
+      <td>01017</td>
+      <td>AL</td>
+      <td>AL | CHAMBERS</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>01033</td>
+      <td>Colbert, AL</td>
+      <td>2015</td>
+      <td>108.0</td>
+      <td>10404.39</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>272.0</td>
+      <td>37080.230000</td>
+      <td>16.000000</td>
+      <td>...</td>
+      <td>22.681014</td>
+      <td>Non Significant</td>
+      <td>Colbert</td>
+      <td>01</td>
+      <td>033</td>
+      <td>Colbert</td>
+      <td>Alabama</td>
+      <td>01033</td>
+      <td>AL</td>
+      <td>AL | COLBERT</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>01045</td>
+      <td>Dale, AL</td>
+      <td>2015</td>
+      <td>0.0</td>
+      <td>0.00</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>12.0</td>
+      <td>405.210000</td>
+      <td>0.999104</td>
+      <td>...</td>
+      <td>17.700437</td>
+      <td>Non Significant</td>
+      <td>Dale</td>
+      <td>01</td>
+      <td>045</td>
+      <td>Dale</td>
+      <td>Alabama</td>
+      <td>01045</td>
+      <td>AL</td>
+      <td>AL | DALE</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>01083</td>
+      <td>Limestone, AL</td>
+      <td>2015</td>
+      <td>0.0</td>
+      <td>0.00</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>55.0</td>
+      <td>9515.590000</td>
+      <td>4.000000</td>
+      <td>...</td>
+      <td>29.157261</td>
+      <td>Non Significant</td>
+      <td>Limestone</td>
+      <td>01</td>
+      <td>083</td>
+      <td>Limestone</td>
+      <td>Alabama</td>
+      <td>01083</td>
+      <td>AL</td>
+      <td>AL | LIMESTONE</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>05145</td>
+      <td>White, AR</td>
+      <td>2015</td>
+      <td>1217.0</td>
+      <td>48412.57</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>1269.0</td>
+      <td>52190.220000</td>
+      <td>11.995594</td>
+      <td>...</td>
+      <td>15.224018</td>
+      <td>Non Significant</td>
+      <td>White</td>
+      <td>05</td>
+      <td>145</td>
+      <td>White</td>
+      <td>Arkansas</td>
+      <td>05145</td>
+      <td>AR</td>
+      <td>AR | WHITE</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>4700</th>
+      <td>21073</td>
+      <td>Franklin, KY</td>
+      <td>2019</td>
+      <td>0.0</td>
+      <td>0.00</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>114.0</td>
+      <td>7749.960000</td>
+      <td>3.910144</td>
+      <td>...</td>
+      <td>62.858188</td>
+      <td>Non Significant</td>
+      <td>Franklin</td>
+      <td>21</td>
+      <td>073</td>
+      <td>Franklin</td>
+      <td>Kentucky</td>
+      <td>21073</td>
+      <td>KY</td>
+      <td>KY | FRANKLIN</td>
+    </tr>
+    <tr>
+      <th>4701</th>
+      <td>56021</td>
+      <td>Laramie, WY</td>
+      <td>2019</td>
+      <td>422.0</td>
+      <td>79083.86</td>
+      <td>100.000000</td>
+      <td>100.000000</td>
+      <td>1784.0</td>
+      <td>337949.890001</td>
+      <td>21.000000</td>
+      <td>...</td>
+      <td>6.286729</td>
+      <td>Non Significant</td>
+      <td>Laramie</td>
+      <td>56</td>
+      <td>021</td>
+      <td>Laramie</td>
+      <td>Wyoming</td>
+      <td>56021</td>
+      <td>WY</td>
+      <td>WY | LARAMIE</td>
+    </tr>
+    <tr>
+      <th>4702</th>
+      <td>54041</td>
+      <td>Lewis, WV</td>
+      <td>2019</td>
+      <td>0.0</td>
+      <td>0.00</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>606.0</td>
+      <td>26648.230000</td>
+      <td>4.000000</td>
+      <td>...</td>
+      <td>10.524948</td>
+      <td>Low-Low</td>
+      <td>Lewis</td>
+      <td>54</td>
+      <td>041</td>
+      <td>Lewis</td>
+      <td>West Virginia</td>
+      <td>54041</td>
+      <td>WV</td>
+      <td>WV | LEWIS</td>
+    </tr>
+    <tr>
+      <th>4703</th>
+      <td>50027</td>
+      <td>Windsor, VT</td>
+      <td>2019</td>
+      <td>319.0</td>
+      <td>12093.61</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>1132.0</td>
+      <td>47825.130000</td>
+      <td>35.000000</td>
+      <td>...</td>
+      <td>14.320922</td>
+      <td>Low-Low</td>
+      <td>Windsor</td>
+      <td>50</td>
+      <td>027</td>
+      <td>Windsor</td>
+      <td>Vermont</td>
+      <td>50027</td>
+      <td>VT</td>
+      <td>VT | WINDSOR</td>
+    </tr>
+    <tr>
+      <th>4704</th>
+      <td>51041</td>
+      <td>Chesterfield, VA</td>
+      <td>2019</td>
+      <td>111.0</td>
+      <td>47135.49</td>
+      <td>28.828829</td>
+      <td>51.859904</td>
+      <td>617.0</td>
+      <td>204885.309999</td>
+      <td>34.339788</td>
+      <td>...</td>
+      <td>124.679835</td>
+      <td>Non Significant</td>
+      <td>Chesterfield</td>
+      <td>51</td>
+      <td>041</td>
+      <td>Chesterfield</td>
+      <td>Virginia</td>
+      <td>51041</td>
+      <td>VA</td>
+      <td>VA | CHESTERFIELD</td>
+    </tr>
+  </tbody>
+</table>
+<p>4705 rows × 65 columns</p>
+</div>
+      <button class="colab-df-convert" onclick="convertToInteractive('df-6eb978bd-7747-441b-91ec-375e3f3e4e12')"
+              title="Convert this dataframe to an interactive table."
+              style="display:none;">
+        
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+       width="24px">
+    <path d="M0 0h24v24H0V0z" fill="none"/>
+    <path d="M18.56 5.44l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94zm-11 1L8.5 8.5l.94-2.06 2.06-.94-2.06-.94L8.5 2.5l-.94 2.06-2.06.94zm10 10l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94z"/><path d="M17.41 7.96l-1.37-1.37c-.4-.4-.92-.59-1.43-.59-.52 0-1.04.2-1.43.59L10.3 9.45l-7.72 7.72c-.78.78-.78 2.05 0 2.83L4 21.41c.39.39.9.59 1.41.59.51 0 1.02-.2 1.41-.59l7.78-7.78 2.81-2.81c.8-.78.8-2.07 0-2.86zM5.41 20L4 18.59l7.72-7.72 1.47 1.35L5.41 20z"/>
+  </svg>
+      </button>
+      
+  <style>
+    .colab-df-container {
+      display:flex;
+      flex-wrap:wrap;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+      <script>
+        const buttonEl =
+          document.querySelector('#df-6eb978bd-7747-441b-91ec-375e3f3e4e12 button.colab-df-convert');
+        buttonEl.style.display =
+          google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+        async function convertToInteractive(key) {
+          const element = document.querySelector('#df-6eb978bd-7747-441b-91ec-375e3f3e4e12');
+          const dataTable =
+            await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                     [key], {});
+          if (!dataTable) return;
+
+          const docLinkHtml = 'Like what you see? Visit the ' +
+            '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+            + ' to learn more about interactive tables.';
+          element.innerHTML = '';
+          dataTable['output_type'] = 'display_data';
+          await google.colab.output.renderOutput(dataTable, element);
+          const docLink = document.createElement('div');
+          docLink.innerHTML = docLinkHtml;
+          element.appendChild(docLink);
+        }
+      </script>
+    </div>
+  </div>
+  
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h2 id="Set-up-for-summaries">Set up for summaries<a class="anchor-link" href="#Set-up-for-summaries">&#182;</a></h2>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[106]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-python"><pre><span></span><span class="n">df_counties_wide</span><span class="o">.</span><span class="n">columns</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[106]:</div>
+
+
+
+
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
+<pre>Index([&#39;FIPS&#39;, &#39;County_St&#39;, &#39;Total Number of Services&#39;,
+       &#39;Total Medicare Payment Amount&#39;, &#39;Total Number of Services: 2019&#39;,
+       &#39;Total Medicare Payment Amount: 2019&#39;, &#39;Total Number of Services: 2018&#39;,
+       &#39;Total Medicare Payment Amount: 2018&#39;, &#39;Total Number of Services: 2017&#39;,
+       &#39;Total Medicare Payment Amount: 2017&#39;, &#39;Total Number of Services: 2016&#39;,
+       &#39;Total Medicare Payment Amount: 2016&#39;, &#39;Total Number of Services: 2015&#39;,
+       &#39;Total Medicare Payment Amount: 2015&#39;, &#39;tot_ratio&#39;,
+       &#39;% ASC Procedures: 2019&#39;, &#39;% ASC Billing: 2019&#39;,
+       &#39;% ASC Procedures: 2018&#39;, &#39;% ASC Billing: 2018&#39;,
+       &#39;% ASC Procedures: 2017&#39;, &#39;% ASC Billing: 2017&#39;,
+       &#39;% ASC Procedures: 2016&#39;, &#39;% ASC Billing: 2016&#39;,
+       &#39;% ASC Procedures: 2015&#39;, &#39;% ASC Billing: 2015&#39;, &#39;% ASC Procedures&#39;,
+       &#39;% ASC Billing&#39;, &#39;Medicare Beneficiaries Population&#39;,
+       &#39;Average Age (years)&#39;, &#39;% Male&#39;, &#39;% Non-Hispanic White&#39;,
+       &#39;% African American&#39;, &#39;% Hispanic&#39;, &#39;% Eligible for Medicaid&#39;,
+       &#39;Average HCC Score&#39;, &#39;Hospital Readmission Rate&#39;,
+       &#39;Emergency Department Visits per 1000 Beneficiaries&#39;,
+       &#39;Procedures Per Capita Standardized Costs&#39;,
+       &#39;Procedure Events Per 1000 Beneficiaries&#39;, &#39;metro&#39;, &#39;% Poverty&#39;,
+       &#39;Median Household Income&#39;, &#39;Overall Population&#39;, &#39;RUCA&#39;,
+       &#39;% without High School Graduation&#39;, &#39;Pct_wth_high_diploma&#39;,
+       &#39;Pct_wth_some_coll&#39;, &#39;Pct_wth_coll_degree&#39;, &#39;Unemployment Rate&#39;,
+       &#39;% Uninsured&#39;, &#39;fibro&#39;, &#39;% Tobacco Use&#39;, &#39;% Obesity&#39;, &#39;migrane&#39;,
+       &#39;Alzheimers&#39;, &#39;Depression&#39;, &#39;Alcohol Abuse&#39;, &#39;Drug Abuse&#39;,
+       &#39;Schizo_othr_psych&#39;, &#39;COPD&#39;, &#39;Chronic Kidney Disease&#39;, &#39;Osteoporosis&#39;,
+       &#39;Stroke&#39;, &#39;Diabetes&#39;, &#39;Asthma&#39;, &#39;Arthritis&#39;, &#39;Hypertension&#39;,
+       &#39;Heart Failure&#39;, &#39;Ischemic Heart Disease&#39;, &#39;Overall Population Density&#39;,
+       &#39;Medicare Population Density&#39;, &#39;Moran I score for ACS billing fraction&#39;,
+       &#39;County&#39;, &#39;StateFIPS&#39;, &#39;CountyFIPS_3&#39;, &#39;CountyName&#39;, &#39;StateName&#39;,
+       &#39;CountyFIPS&#39;, &#39;StateAbbr&#39;, &#39;STATE_COUNTY&#39;],
+      dtype=&#39;object&#39;)</pre>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[111]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-python"><pre><span></span><span class="c1"># sorted_moran_values = df_counties_wide[&quot;Moran I for ASC billing fraction&quot;].unique()</span>
+<span class="n">sorted_moran_values</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;High-High&quot;</span><span class="p">,</span><span class="s2">&quot;Low-Low&quot;</span><span class="p">,</span><span class="s2">&quot;Low-High&quot;</span><span class="p">,</span><span class="s2">&quot;High-Low&quot;</span><span class="p">,</span><span class="s2">&quot;Non Significant&quot;</span><span class="p">]</span>  <span class="c1"># list out specifically so you can get the order you want</span>
+<span class="n">sorted_moran_values_all</span> <span class="o">=</span> <span class="n">sorted_moran_values</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;All&quot;</span><span class="p">]</span>   <span class="c1">#[pd.IndexSlice[:]]  # pd.IndexSlice[:]] represents all</span>
+
+<span class="n">moran_frequencies</span> <span class="o">=</span> <span class="n">df_counties_wide</span><span class="p">[</span><span class="s2">&quot;Moran I for ASC billing fraction&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()[</span><span class="n">sorted_moran_values</span><span class="p">]</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[128]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-python"><pre><span></span><span class="n">summable_groups</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df_counties_wide</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="s2">&quot;total&quot;</span> <span class="ow">in</span> <span class="n">col</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span>
+<span class="n">summable_groups</span> <span class="o">=</span> <span class="n">summable_groups</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;Overall Population&quot;</span><span class="p">,</span> <span class="s2">&quot;Medicare Beneficiaries Population&quot;</span><span class="p">]</span>
+<span class="n">df_wide_sums</span> <span class="o">=</span> <span class="n">df_counties_wide</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;Moran I for ASC billing fraction&quot;</span><span class="p">)[</span><span class="n">summable_groups</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">df_wide_sums</span> <span class="o">=</span> <span class="n">df_wide_sums</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">Counties</span><span class="o">=</span><span class="n">moran_frequencies</span><span class="p">)</span>
+<span class="n">df_wide_sums</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">&quot;All&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_wide_sums</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+<span class="n">df_wide_sums</span> <span class="o">=</span> <span class="n">df_wide_sums</span><span class="p">[</span><span class="n">df_wide_sums</span><span class="o">.</span><span class="n">columns</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>  <span class="c1"># flip column order left-right to be more logical</span>
+<span class="k">with</span> <span class="n">pd</span><span class="o">.</span><span class="n">option_context</span><span class="p">(</span><span class="s1">&#39;display.float_format&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:,.0f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">):</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">df_wide_sums</span><span class="p">)</span>
+
+<span class="n">save_df</span><span class="p">(</span><span class="n">df_wide_sums</span><span class="p">,</span> <span class="s2">&quot;df_wide_sums&quot;</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+
+  <div id="df-028838c7-6f68-4d08-857b-c7eef87ed859">
+    <div class="colab-df-container">
+      <div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Counties</th>
+      <th>Medicare Beneficiaries Population</th>
+      <th>Overall Population</th>
+      <th>Total Medicare Payment Amount: 2015</th>
+      <th>Total Number of Services: 2015</th>
+      <th>Total Medicare Payment Amount: 2016</th>
+      <th>Total Number of Services: 2016</th>
+      <th>Total Medicare Payment Amount: 2017</th>
+      <th>Total Number of Services: 2017</th>
+      <th>Total Medicare Payment Amount: 2018</th>
+      <th>Total Number of Services: 2018</th>
+      <th>Total Medicare Payment Amount: 2019</th>
+      <th>Total Number of Services: 2019</th>
+      <th>Total Medicare Payment Amount</th>
+      <th>Total Number of Services</th>
+    </tr>
+    <tr>
+      <th>Moran I for ASC billing fraction</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>High-High</th>
+      <td>90</td>
+      <td>8,252,843</td>
+      <td>49,290,013</td>
+      <td>17,139,184</td>
+      <td>87,102</td>
+      <td>18,933,282</td>
+      <td>106,216</td>
+      <td>20,196,017</td>
+      <td>104,668</td>
+      <td>20,980,333</td>
+      <td>106,943</td>
+      <td>21,192,147</td>
+      <td>116,676</td>
+      <td>98,440,963</td>
+      <td>521,605</td>
+    </tr>
+    <tr>
+      <th>High-Low</th>
+      <td>33</td>
+      <td>1,530,091</td>
+      <td>8,804,718</td>
+      <td>2,888,148</td>
+      <td>15,446</td>
+      <td>3,229,780</td>
+      <td>15,408</td>
+      <td>3,008,710</td>
+      <td>14,722</td>
+      <td>2,804,513</td>
+      <td>13,691</td>
+      <td>2,815,553</td>
+      <td>14,891</td>
+      <td>14,746,704</td>
+      <td>74,158</td>
+    </tr>
+    <tr>
+      <th>Low-High</th>
+      <td>74</td>
+      <td>4,004,628</td>
+      <td>26,958,805</td>
+      <td>8,693,092</td>
+      <td>106,478</td>
+      <td>7,748,456</td>
+      <td>90,410</td>
+      <td>7,584,302</td>
+      <td>90,625</td>
+      <td>8,247,523</td>
+      <td>101,380</td>
+      <td>8,687,247</td>
+      <td>103,071</td>
+      <td>40,960,620</td>
+      <td>491,964</td>
+    </tr>
+    <tr>
+      <th>Low-Low</th>
+      <td>139</td>
+      <td>3,623,493</td>
+      <td>19,364,704</td>
+      <td>5,561,819</td>
+      <td>95,757</td>
+      <td>4,296,993</td>
+      <td>65,244</td>
+      <td>3,946,056</td>
+      <td>59,105</td>
+      <td>4,005,969</td>
+      <td>61,639</td>
+      <td>4,649,317</td>
+      <td>72,170</td>
+      <td>22,460,154</td>
+      <td>353,915</td>
+    </tr>
+    <tr>
+      <th>Non Significant</th>
+      <td>605</td>
+      <td>25,346,776</td>
+      <td>163,845,060</td>
+      <td>57,438,585</td>
+      <td>472,764</td>
+      <td>55,995,168</td>
+      <td>396,368</td>
+      <td>58,543,009</td>
+      <td>428,827</td>
+      <td>60,913,491</td>
+      <td>429,358</td>
+      <td>63,638,158</td>
+      <td>434,911</td>
+      <td>296,528,411</td>
+      <td>2,162,228</td>
+    </tr>
+    <tr>
+      <th>All</th>
+      <td>941</td>
+      <td>42,757,830</td>
+      <td>268,263,300</td>
+      <td>91,720,829</td>
+      <td>777,547</td>
+      <td>90,203,679</td>
+      <td>673,646</td>
+      <td>93,278,093</td>
+      <td>697,947</td>
+      <td>96,951,828</td>
+      <td>713,011</td>
+      <td>100,982,422</td>
+      <td>741,719</td>
+      <td>473,136,851</td>
+      <td>3,603,870</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+      <button class="colab-df-convert" onclick="convertToInteractive('df-028838c7-6f68-4d08-857b-c7eef87ed859')"
+              title="Convert this dataframe to an interactive table."
+              style="display:none;">
+        
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+       width="24px">
+    <path d="M0 0h24v24H0V0z" fill="none"/>
+    <path d="M18.56 5.44l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94zm-11 1L8.5 8.5l.94-2.06 2.06-.94-2.06-.94L8.5 2.5l-.94 2.06-2.06.94zm10 10l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94z"/><path d="M17.41 7.96l-1.37-1.37c-.4-.4-.92-.59-1.43-.59-.52 0-1.04.2-1.43.59L10.3 9.45l-7.72 7.72c-.78.78-.78 2.05 0 2.83L4 21.41c.39.39.9.59 1.41.59.51 0 1.02-.2 1.41-.59l7.78-7.78 2.81-2.81c.8-.78.8-2.07 0-2.86zM5.41 20L4 18.59l7.72-7.72 1.47 1.35L5.41 20z"/>
+  </svg>
+      </button>
+      
+  <style>
+    .colab-df-container {
+      display:flex;
+      flex-wrap:wrap;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+      <script>
+        const buttonEl =
+          document.querySelector('#df-028838c7-6f68-4d08-857b-c7eef87ed859 button.colab-df-convert');
+        buttonEl.style.display =
+          google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+        async function convertToInteractive(key) {
+          const element = document.querySelector('#df-028838c7-6f68-4d08-857b-c7eef87ed859');
+          const dataTable =
+            await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                     [key], {});
+          if (!dataTable) return;
+
+          const docLinkHtml = 'Like what you see? Visit the ' +
+            '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+            + ' to learn more about interactive tables.';
+          element.innerHTML = '';
+          dataTable['output_type'] = 'display_data';
+          await google.colab.output.renderOutput(dataTable, element);
+          const docLink = document.createElement('div');
+          docLink.innerHTML = docLinkHtml;
+          element.appendChild(docLink);
+        }
+      </script>
+    </div>
+  </div>
+  
+</div>
+
+</div>
+
+</div>
+
+</div>
+
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
@@ -16495,15 +17318,10 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[16]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[47]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">categories</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Total Number of Services&quot;</span><span class="p">,</span><span class="s2">&quot;Total Medicare Payment Amount&quot;</span><span class="p">,</span> <span class="s2">&quot;% ASC Procedures&quot;</span><span class="p">,</span> <span class="s2">&quot;% ASC Billing&quot;</span> <span class="p">]</span>
-<span class="c1"># sorted_moran_values = df_counties_wide[&quot;Moran I score for ACS billing fraction&quot;].unique()</span>
-<span class="n">sorted_moran_values</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;High-High&quot;</span><span class="p">,</span><span class="s2">&quot;Low-Low&quot;</span><span class="p">,</span><span class="s2">&quot;Low-High&quot;</span><span class="p">,</span><span class="s2">&quot;High-Low&quot;</span><span class="p">,</span><span class="s2">&quot;Non Significant&quot;</span><span class="p">]</span>  <span class="c1"># list out specifically so you can get the order you want</span>
-<span class="n">sorted_moran_values_all</span> <span class="o">=</span> <span class="n">sorted_moran_values</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;All&quot;</span><span class="p">]</span>   <span class="c1">#[pd.IndexSlice[:]]  # pd.IndexSlice[:]] represents all</span>
-
-<span class="n">value_counts</span> <span class="o">=</span> <span class="n">df_counties_wide</span><span class="p">[</span><span class="s2">&quot;Moran I score for ACS billing fraction&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()[</span><span class="n">sorted_moran_values</span><span class="p">]</span>
 
 <span class="n">df_counties_with_slope</span> <span class="o">=</span> <span class="n">df_counties_wide</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="c1"># Calculate regression and sum and mean from individual year later</span>
@@ -16519,12 +17337,12 @@ Resolving deltas: 100% (75/75), done.
 <span class="c1"># Options: 	[count, mean, std, min, 25%, 50%, 75%, max] assuming default percentiles argument</span>
 <span class="n">cols_to_show</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;10%&quot;</span><span class="p">,</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span><span class="s2">&quot;90%&quot;</span><span class="p">]</span>
 <span class="k">for</span> <span class="n">possible_Moran_value</span> <span class="ow">in</span> <span class="n">sorted_moran_values</span><span class="p">:</span>
-    <span class="n">df_counties_summary_dict</span><span class="p">[</span><span class="n">possible_Moran_value</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_counties_with_slope</span><span class="p">[</span><span class="n">df_counties_with_slope</span><span class="p">[</span><span class="s2">&quot;Moran I score for ACS billing fraction&quot;</span><span class="p">]</span><span class="o">==</span><span class="n">possible_Moran_value</span><span class="p">]</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">percentiles</span><span class="o">=</span><span class="p">[</span><span class="o">.</span><span class="mi">1</span><span class="p">,</span><span class="o">.</span><span class="mi">25</span><span class="p">,</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span><span class="o">.</span><span class="mi">75</span><span class="p">,</span><span class="o">.</span><span class="mi">9</span><span class="p">])</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cols_to_show</span><span class="p">]</span>
+    <span class="n">df_counties_summary_dict</span><span class="p">[</span><span class="n">possible_Moran_value</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_counties_with_slope</span><span class="p">[</span><span class="n">df_counties_with_slope</span><span class="p">[</span><span class="s2">&quot;Moran I for ASC billing fraction&quot;</span><span class="p">]</span><span class="o">==</span><span class="n">possible_Moran_value</span><span class="p">]</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">percentiles</span><span class="o">=</span><span class="p">[</span><span class="o">.</span><span class="mi">1</span><span class="p">,</span><span class="o">.</span><span class="mi">25</span><span class="p">,</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span><span class="o">.</span><span class="mi">75</span><span class="p">,</span><span class="o">.</span><span class="mi">9</span><span class="p">])</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cols_to_show</span><span class="p">]</span>
 <span class="n">df_counties_summary_dict</span><span class="p">[</span><span class="s2">&quot;All&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_counties_with_slope</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">percentiles</span><span class="o">=</span><span class="p">[</span><span class="o">.</span><span class="mi">1</span><span class="p">,</span><span class="o">.</span><span class="mi">25</span><span class="p">,</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span><span class="o">.</span><span class="mi">75</span><span class="p">,</span><span class="o">.</span><span class="mi">9</span><span class="p">])</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cols_to_show</span><span class="p">]</span>
 
 <span class="n">df_counties_summary</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_counties_summary_dict</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="n">df_counties_summary_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 <span class="k">for</span> <span class="n">possible_Moran_value</span> <span class="ow">in</span> <span class="n">sorted_moran_values</span><span class="p">:</span>
-    <span class="n">df_counties_summary</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">possible_Moran_value</span><span class="p">,</span><span class="n">cols_to_show</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="s2">&quot;N&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value_counts</span><span class="p">[</span><span class="n">possible_Moran_value</span><span class="p">]</span>
+    <span class="n">df_counties_summary</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">possible_Moran_value</span><span class="p">,</span><span class="n">cols_to_show</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="s2">&quot;N&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">moran_frequencies</span><span class="p">[</span><span class="n">possible_Moran_value</span><span class="p">]</span>
 
 <span class="c1"># Reorder into the sorted order we set above</span>
 <span class="n">df_counties_summary</span> <span class="o">=</span> <span class="n">df_counties_summary</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sorted_moran_values_all</span><span class="p">]</span>
@@ -16544,7 +17362,7 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[17]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">df_counties_long</span><span class="o">.</span><span class="n">columns</span>
@@ -16563,7 +17381,7 @@ Resolving deltas: 100% (75/75), done.
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[17]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[&nbsp;]:</div>
 
 
 
@@ -16604,7 +17422,44 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[20]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[87]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-python"><pre><span></span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[87]:</div>
+
+
+
+
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
+<pre>&#39;% ASC Billing:&#39;</pre>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[117]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">key_cols</span><span class="o">=</span><span class="p">{</span>
@@ -16636,7 +17491,6 @@ Resolving deltas: 100% (75/75), done.
     <span class="s1">&#39;Population Density&#39;</span><span class="p">:</span> <span class="s2">&quot;Overall Population Density&quot;</span><span class="p">,</span>
     <span class="s1">&#39;Medicare Population Density&#39;</span><span class="p">:</span> <span class="s2">&quot;Medicare Population Density&quot;</span><span class="p">,</span>
 <span class="p">}</span>
-<span class="n">df_counties_long</span><span class="p">[</span><span class="s2">&quot;Year&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">({</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">col_category</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">year</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">2019</span> <span class="o">+</span><span class="mi">1</span><span class="p">)})</span>
 <span class="n">df_counties_summary_clean</span> <span class="o">=</span> <span class="n">df_counties_summary</span><span class="p">[</span><span class="n">key_cols</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
 <span class="n">df_counties_summary_clean</span> <span class="o">=</span> <span class="n">df_counties_summary_clean</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">key_cols</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
 
@@ -16665,7 +17519,7 @@ Resolving deltas: 100% (75/75), done.
 
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
 
-  <div id="df-9765fb17-20ca-406c-957b-ed293b5ebdd1">
+  <div id="df-b35e04f8-8c8f-43aa-a2e2-8cdac723e822">
     <div class="colab-df-container">
       <div>
 <style scoped>
@@ -17052,7 +17906,7 @@ Resolving deltas: 100% (75/75), done.
       <td>77,843.60</td>
     </tr>
     <tr>
-      <th>% without GED</th>
+      <th>% without High School Graduation</th>
       <td>6.90</td>
       <td>11.62</td>
       <td>15.05</td>
@@ -17264,7 +18118,7 @@ Resolving deltas: 100% (75/75), done.
   </tbody>
 </table>
 </div>
-      <button class="colab-df-convert" onclick="convertToInteractive('df-9765fb17-20ca-406c-957b-ed293b5ebdd1')"
+      <button class="colab-df-convert" onclick="convertToInteractive('df-b35e04f8-8c8f-43aa-a2e2-8cdac723e822')"
               title="Convert this dataframe to an interactive table."
               style="display:none;">
         
@@ -17315,12 +18169,12 @@ Resolving deltas: 100% (75/75), done.
 
       <script>
         const buttonEl =
-          document.querySelector('#df-9765fb17-20ca-406c-957b-ed293b5ebdd1 button.colab-df-convert');
+          document.querySelector('#df-b35e04f8-8c8f-43aa-a2e2-8cdac723e822 button.colab-df-convert');
         buttonEl.style.display =
           google.colab.kernel.accessAllowed ? 'block' : 'none';
 
         async function convertToInteractive(key) {
-          const element = document.querySelector('#df-9765fb17-20ca-406c-957b-ed293b5ebdd1');
+          const element = document.querySelector('#df-b35e04f8-8c8f-43aa-a2e2-8cdac723e822');
           const dataTable =
             await google.colab.kernel.invokeFunction('convertToInteractive',
                                                      [key], {});

@@ -24,7 +24,7 @@ import urllib.request
 import json
 
 
-# In[9]:
+# In[2]:
 
 
 #@title ## Option 1) Mount google drive and import my code
@@ -67,7 +67,7 @@ print(sys.path)
 
 # # Helper functions
 
-# In[12]:
+# In[3]:
 
 
 years = np.arange(2015,2019+1)
@@ -143,7 +143,7 @@ def save_figure(fig, file_name:str, animated=False):
 # ## Load ENT procedures df from csv file
 # This is specifically a wide type df so it is one row per procedure with years as different columns.To understand what is meant by long type and wide type dataframes, see https://towardsdatascience.com/visualization-with-plotly-express-comprehensive-guide-eb5ee4b50b57
 
-# In[ ]:
+# In[4]:
 
 
 df_procedures_orig = pd.read_csv("data/2022_05_05 sums and slopes ent with HCPCS descriptions.csv", 
@@ -158,7 +158,7 @@ df_procedures_orig = pd.read_csv("data/2022_05_05 sums and slopes ent with HCPCS
 
 # ## Clean df and recalculate regression
 
-# In[ ]:
+# In[5]:
 
 
 df_procedures_clean = df_procedures_orig.set_index(["HCPCS Code", "HCPCS Description"])
@@ -206,7 +206,7 @@ save_df(df_procedures_recalc, "df_procedures_recalc")
 
 # ## Load data
 
-# In[4]:
+# In[6]:
 
 
 # @title Load spatial coordinates of counties
@@ -215,14 +215,14 @@ with urllib.request.urlopen('https://raw.githubusercontent.com/plotly/datasets/m
     counties = json.load(response)
 
 
-# In[10]:
+# In[7]:
 
 
 # @title Load conversion df between FIPS code and county string
 fips2county = pd.read_csv("data/fips2county.tsv", sep="\t", comment='#', dtype=str)
 
 
-# In[11]:
+# In[8]:
 
 
 # @title Load our ENT df of all counties, their info, and the Moran's analysis
@@ -230,26 +230,50 @@ fips2county = pd.read_csv("data/fips2county.tsv", sep="\t", comment='#', dtype=s
 df_counties_wide_orig = pd.read_csv("data/2022_04_10 ent initial output.csv", dtype={"FIPS": str})
 
 
-# In[19]:
+# In[ ]:
 
 
 df_counties_wide_orig.columns
 
 
-# In[13]:
+# In[108]:
 
 
-# Merge with the fips 2 county standard data set
+# @title Merge with the fips 2 county standard data set
 df_counties_wide = pd.merge(left=df_counties_wide_orig, right=fips2county, how="left", left_on='FIPS', right_on='CountyFIPS')
 # Insert a county "County, ST" col (i.e. "Monmouth, NJ" or "Champaign, IL") for ease
 df_counties_wide.insert(1, "County_St", df_counties_wide["CountyName"].astype(str) + ", " + df_counties_wide["StateAbbr"].astype(str))
 
+cols_renamed={
+    "Average Age": "Average Age (years)",
+    'Percent Male': "% Male",
+    'Percent Non-Hispanic White': "% Non-Hispanic White",
+    'Percent African American': "% African American",
+    'Percent Hispanic': "% Hispanic",
+    'Percent Eligible for Medicaid': "% Eligible for Medicaid",
+    'pct_poverty': "% Poverty",
+    'median_house_income': "Median Household Income",
+    "Pct_wthout_high_diploma": "% without High School Graduation",
+    'unemployment': "Unemployment Rate",
+    'pct_uninsured': "% Uninsured",
+    'tabacco': "% Tobacco Use",
+    'obesity': "% Obesity",
+    #"Asthma": "% with Asthma",
+    '2013_Rural_urban_cont_code': "RUCA",
+    'pop': "Overall Population",
+    'Beneficiaries with Part A and Part B': "Medicare Beneficiaries Population",
+    'Population Density': "Overall Population Density",
+    'Medicare Population Density': "Medicare Population Density",
+    "Moran I score for ACS billing fraction":  "Moran I for ASC billing fraction",  # It is "ASC" not "ACS"
+}
+df_counties_wide = df_counties_wide.rename(columns=cols_renamed)
 
-# In[14]:
+
+# In[109]:
 
 
-info_simple = ["FIPS", "CountyName","StateAbbr", "% ASC Billing", "Moran I score for ACS billing fraction"]
-info_main = ["FIPS", "County",	"StateFIPS", "Total Medicare Payment Amount", "% ASC Procedures", "% ASC Billing",	"CountyFIPS_3",	"CountyName",	"StateName",	"CountyFIPS",	"StateAbbr",	"STATE_COUNTY"]
+info_simple = ["FIPS", "CountyName","StateAbbr", "% ASC Billing"]
+info_main = ["FIPS", "County",	"StateFIPS", "Total Medicare Payment Amount", "% ASC Procedures", "% ASC Billing",	"CountyFIPS_3",	"CountyName",	"StateName",	"CountyFIPS",	"StateAbbr",	"STATE_COUNTY", "Moran I for ASC billing fraction"]
 
 df_counties_wide_simple=df_counties_wide[info_simple]
 df_counties_wide_main=df_counties_wide[info_main]
@@ -261,7 +285,7 @@ with pd.option_context('display.max_rows', 3, 'display.max_columns', None):
 
 # ## Create long df from wide df- i.e. separate out the year columns into different rows
 
-# In[15]:
+# In[110]:
 
 
 col_categories = ["Total Number of Services:", "Total Medicare Payment Amount:", "% ASC Procedures:", "% ASC Billing:"]
@@ -291,17 +315,52 @@ df_counties_long = pd.merge(left=df_counties_long,
                    how="left", on=cols_to_keep)
 
 
-# ## Create summary data by Moran category
-
-# In[16]:
+# In[89]:
 
 
-categories = ["Total Number of Services","Total Medicare Payment Amount", "% ASC Procedures", "% ASC Billing" ]
-# sorted_moran_values = df_counties_wide["Moran I score for ACS billing fraction"].unique()
+df_counties_long
+
+
+# ## Set up for summaries
+
+# In[106]:
+
+
+df_counties_wide.columns
+
+
+# In[111]:
+
+
+# sorted_moran_values = df_counties_wide["Moran I for ASC billing fraction"].unique()
 sorted_moran_values = ["High-High","Low-Low","Low-High","High-Low","Non Significant"]  # list out specifically so you can get the order you want
 sorted_moran_values_all = sorted_moran_values + ["All"]   #[pd.IndexSlice[:]]  # pd.IndexSlice[:]] represents all
 
-value_counts = df_counties_wide["Moran I score for ACS billing fraction"].value_counts()[sorted_moran_values]
+moran_frequencies = df_counties_wide["Moran I for ASC billing fraction"].value_counts()[sorted_moran_values]
+
+
+# In[128]:
+
+
+summable_groups = [col for col in df_counties_wide.columns if "total" in col.lower()]
+summable_groups = summable_groups + ["Overall Population", "Medicare Beneficiaries Population"]
+df_wide_sums = df_counties_wide.groupby("Moran I for ASC billing fraction")[summable_groups].sum()
+df_wide_sums = df_wide_sums.assign(Counties=moran_frequencies)
+df_wide_sums.loc["All"] = df_wide_sums.sum()
+
+df_wide_sums = df_wide_sums[df_wide_sums.columns[::-1]]  # flip column order left-right to be more logical
+with pd.option_context('display.float_format', '{:,.0f}'.format):
+    display(df_wide_sums)
+
+save_df(df_wide_sums, "df_wide_sums")
+
+
+# ## Create summary data by Moran category
+
+# In[47]:
+
+
+categories = ["Total Number of Services","Total Medicare Payment Amount", "% ASC Procedures", "% ASC Billing" ]
 
 df_counties_with_slope = df_counties_wide.copy()
 # Calculate regression and sum and mean from individual year later
@@ -317,12 +376,12 @@ df_counties_summary_dict = {}   # create a dict we will concatenate into a df la
 # Options: 	[count, mean, std, min, 25%, 50%, 75%, max] assuming default percentiles argument
 cols_to_show = ["10%","mean","90%"]
 for possible_Moran_value in sorted_moran_values:
-    df_counties_summary_dict[possible_Moran_value] = df_counties_with_slope[df_counties_with_slope["Moran I score for ACS billing fraction"]==possible_Moran_value].describe(percentiles=[.1,.25,.5,.75,.9]).loc[cols_to_show]
+    df_counties_summary_dict[possible_Moran_value] = df_counties_with_slope[df_counties_with_slope["Moran I for ASC billing fraction"]==possible_Moran_value].describe(percentiles=[.1,.25,.5,.75,.9]).loc[cols_to_show]
 df_counties_summary_dict["All"] = df_counties_with_slope.describe(percentiles=[.1,.25,.5,.75,.9]).loc[cols_to_show]
 
 df_counties_summary = pd.concat(df_counties_summary_dict.values(), axis=0, keys=df_counties_summary_dict.keys())
 for possible_Moran_value in sorted_moran_values:
-    df_counties_summary.loc[(possible_Moran_value,cols_to_show[0]), "N"] = value_counts[possible_Moran_value]
+    df_counties_summary.loc[(possible_Moran_value,cols_to_show[0]), "N"] = moran_frequencies[possible_Moran_value]
 
 # Reorder into the sorted order we set above
 df_counties_summary = df_counties_summary.loc[sorted_moran_values_all]
@@ -331,13 +390,19 @@ df_counties_summary = df_counties_summary.loc[sorted_moran_values_all]
 # ## Create a more presentable format
 # Select out only the columns you want and rename the columns
 
-# In[17]:
+# In[ ]:
 
 
 df_counties_long.columns
 
 
-# In[20]:
+# In[87]:
+
+
+
+
+
+# In[117]:
 
 
 key_cols={
@@ -369,7 +434,6 @@ key_cols={
     'Population Density': "Overall Population Density",
     'Medicare Population Density': "Medicare Population Density",
 }
-df_counties_long["Year"].replace({ f"{col_category} {year}":f"{year}" for year in range(2015, 2019 +1)})
 df_counties_summary_clean = df_counties_summary[key_cols.keys()]
 df_counties_summary_clean = df_counties_summary_clean.rename(columns=key_cols).transpose()
 
