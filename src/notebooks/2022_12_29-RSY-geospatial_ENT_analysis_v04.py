@@ -16,6 +16,7 @@ import scipy
 import sklearn
 import sklearn.linear_model
 import pandas as pd
+idx = pd.IndexSlice
 import plotly.express as px
 
 import warnings
@@ -67,7 +68,7 @@ print(sys.path)
 
 # # Helper functions
 
-# In[133]:
+# In[4]:
 
 
 years = np.arange(2015,2019+1)
@@ -103,8 +104,8 @@ requests.get('http://172.28.0.2:9000/api/sessions').json() =
   'path': 'fileId=1ZAqQEIxR08eODSPEHvKPwbZoioVdV8L9',
   'type': 'notebook'}]
 """
-notebook_filename = requests.get('http://172.28.0.2:9000/api/sessions').json()[0]['name']
-
+#notebook_filename = requests.get('http://172.28.0.2:9000/api/sessions').json()[0]['name']
+notebook_filename="2022_12_29-RSY-geospatial_ENT_analysis_v04.ipynb"
 #@markdown # get_path_to_save()
 def get_path_to_save(file_prefix="", save_filename:str=None, save_in_subfolder:str=None, extension="png", create_folder_if_necessary=True):
     save_path = ["outputs",
@@ -143,47 +144,70 @@ def save_figure(fig, file_name:str, animated=False):
 # ## Load ENT procedures df from csv file
 # This is specifically a wide type df so it is one row per procedure with years as different columns.To understand what is meant by long type and wide type dataframes, see https://towardsdatascience.com/visualization-with-plotly-express-comprehensive-guide-eb5ee4b50b57
 
-# In[4]:
-
-
-df_procedures_orig = pd.read_csv("data/2022_05_05 sums and slopes ent with HCPCS descriptions.csv", 
-                           dtype={
-                               "HCPCS Code": str,
-                               "Total Number of Services": np.int64,
-                               **{f"Total Number of Services: {year}": np.int64 for year in range(2015,2019+1)}
-                               })  # gets per healthcare code info
-
-
 # The slope given in the csv file is actually the inverse slope. We need to either recalculate it or invert it. I will just recalculate all the regression values.
+
+# In[51]:
+
+
+df_procedures_orig = pd.read_csv("data/1_renamed/procedure_specific_data.csv",
+                                 keep_default_na=False, # makes empty string cells still be interpreted as str 
+                                dtype={
+                                    "Specialty": str,
+                                    "Group": str,
+                                    "HCPCS Code": str,
+                                    "Total Number of Services": np.int64,
+                                    **{f"Total Number of Services: {year}": np.int64 for year in range(2015,2019+1)}
+                                    })  # gets per healthcare code info
+
 
 # ## Clean df and recalculate regression
 
-# In[5]:
+# In[54]:
 
 
-df_procedures_clean = df_procedures_orig.set_index(["HCPCS Code", "HCPCS Description"])
+df_procedures_clean = df_procedures_orig.set_index(["Specialty","Group","HCPCS Code", "HCPCS Description"])
 
 # Remove the "amount" word 
 df_procedures_clean.columns = [col.replace("Total Medicare Payment Amount","Total Medicare Payment") for col in df_procedures_clean.columns]
 # Drop columns besides the individual year ones. Will recalculate the other ones as a quality assurance check.
 df_procedures_clean = df_procedures_clean.drop(columns=[col for col in df_procedures_clean.columns if ("slope" in col.lower() or "pearson" in col.lower() or ":" not in col)] )
 
-# Rename the columns so they can be split  easier. The 20 is the first two digits of the year columns
+# Rename the columns so they can be split  easier. The 20 is the first two digits of the year columns (e.g. "2019") 
 df_procedures_clean.columns = [col.replace(": ",": : ").replace(": 20","Annual: 20") for col in df_procedures_clean.columns]
 
 # Make Multiindex
 df_procedures_clean.columns = pd.MultiIndex.from_tuples([tuple(col.split(": ")) if ":" in col else (col,"","") for col in df_procedures_clean.columns], names=["Category","Stat","Year"])
 df_procedures_clean = df_procedures_clean[sorted(df_procedures_clean)]  # rearrange cols alphabetically
 
+col_categories = df_procedures_clean.columns.levels[0]  #["Total Number of Services", "Total Medicare Payment Amount"]
 
-categories = df_procedures_clean.columns.levels[0]  #["Total Number of Services", "Total Medicare Payment Amount"]
+
+# In[55]:
+
+
+specialties = df_procedures_clean.index.unique(level="Specialty")
+all_groups = df_procedures_clean.index.unique(level="Group")
+
+df_procedures_clean.loc[("Total",None,"Total","Total")] = df_procedures_clean.sum()
+for specialty in specialties:
+    df_procedures_clean.loc[(specialty,None,"Total","Total")]=df_procedures_clean.loc[specialty].sum()
+    groups = df_procedures_clean.loc[specialty].index.unique(level="Group")
+    for group in groups:
+        if df_procedures_clean.loc[(specialty,group)].shape[0] > 1:
+            df_procedures_clean.loc[(specialty,group,"Total","Total")]=df_procedures_clean.loc[(specialty,group)].sum()
+
+#df_procedures_clean = df_procedures_clean.sort_index()
+
+
+# In[56]:
+
 
 # Calculate regression and sum and mean from individual year later
 df_procedures_recalc = df_procedures_clean.copy()
-for category in categories:
-    new_df = df_procedures_recalc[(category,"Annual")].apply(calc_regression,axis=1, result_type="expand", args=(years,) )
-    df_procedures_recalc[[(category,"Overall",new_col) for new_col in new_df.columns ]]=new_df
-    #df_procedures_recalc[(category,"","Slope")]=df_procedures_recalc[(category,"Annual")].apply(calc_regression,axis=1)
+for col_category in col_categories:
+    new_df = df_procedures_recalc[(col_category,"Annual")].apply(calc_regression,axis=1, result_type="expand", args=(years,) )
+    df_procedures_recalc[[(col_category,"Overall",new_col) for new_col in new_df.columns ]]=new_df
+    #df_procedures_recalc[(col_category,"","Slope")]=df_procedures_recalc[(col_category,"Annual")].apply(calc_regression,axis=1)
 
 # rearrange cols alphabetically, but only by the first two elements of the each column's name tuple
 # This allows the order of the newly added columns to remain relative to themselves, but be rearranged relative to the other columns
@@ -191,9 +215,10 @@ df_procedures_recalc = df_procedures_recalc[sorted(df_procedures_recalc.columns,
 
 #df_procedures = df_procedures.sort_values(by=("Total Number of Services","","Sum"), ascending=False)  # sort rows by volume 
 df_procedures_recalc = df_procedures_recalc.sort_values(by=("Total Medicare Payment","Overall","Mean"), ascending=False)  # sort rows by volume 
+df_procedures_recalc = df_procedures_recalc.sort_index()
 
 
-# In[ ]:
+# In[57]:
 
 
 with pd.option_context('display.float_format', '{:,.2f}'.format):
@@ -202,11 +227,22 @@ with pd.option_context('display.float_format', '{:,.2f}'.format):
 save_df(df_procedures_recalc, "df_procedures_recalc")
 
 
+# In[35]:
+
+
+df_procedures_clean2 = df_procedures_clean.sort_index(level=[0,1,2,3])
+df_procedures_clean2.index.is_monotonic_increasing
+
+#df_procedures_clean.loc[(specialty,slice(None),slice("0","9"),slice(None))]
+#df_procedures_clean.loc[idx[specialty,:,"31571":"31622"]]
+#df_procedures_clean.loc[(specialty,"B","a","a"):tuple()]
+
+
 # # County analysis
 
 # ## Load data
 
-# In[6]:
+# In[ ]:
 
 
 # @title Load spatial coordinates of counties
@@ -215,14 +251,14 @@ with urllib.request.urlopen('https://raw.githubusercontent.com/plotly/datasets/m
     counties = json.load(response)
 
 
-# In[7]:
+# In[ ]:
 
 
 # @title Load conversion df between FIPS code and county string
 fips2county = pd.read_csv("data/fips2county.tsv", sep="\t", comment='#', dtype=str)
 
 
-# In[8]:
+# In[ ]:
 
 
 # @title Load our ENT df of all counties, their info, and the Moran's analysis
@@ -236,7 +272,7 @@ df_counties_wide_orig = pd.read_csv("data/2022_04_10 ent initial output.csv", dt
 df_counties_wide_orig.columns
 
 
-# In[108]:
+# In[ ]:
 
 
 # @title Merge with the fips 2 county standard data set
@@ -269,7 +305,7 @@ cols_renamed={
 df_counties_wide = df_counties_wide.rename(columns=cols_renamed)
 
 
-# In[109]:
+# In[ ]:
 
 
 info_simple = ["FIPS", "CountyName","StateAbbr", "% ASC Billing"]
@@ -285,16 +321,16 @@ with pd.option_context('display.max_rows', 3, 'display.max_columns', None):
 
 # ## Create long df from wide df- i.e. separate out the year columns into different rows
 
-# In[110]:
+# In[ ]:
 
 
 col_categories = ["Total Number of Services:", "Total Medicare Payment Amount:", "% ASC Procedures:", "% ASC Billing:"]
 cols_to_keep = ["FIPS","County_St"]  # columns to keep in every subgroup so you can line up extra info later
 
-# Create list of df's to combine later, each df is from melting of one category of columns
+# Create list of df's to combine later, each df is from melting of one col_category of columns
 df_counties_longs = []
 
-# Convert each type of category to long format in separate dataframes
+# Convert each type of col_category to long format in separate dataframes
 for col_category in col_categories:
         df_counties_long = df_counties_wide.melt(id_vars=cols_to_keep, 
                                var_name="Year", 
@@ -304,7 +340,7 @@ for col_category in col_categories:
         df_counties_long["Year"] = df_counties_long["Year"].replace({ f"{col_category} {year}":f"{year}" for year in range(2015, 2019 +1)})
         df_counties_longs.append(df_counties_long)
 
-# Merge the separate category dataframes
+# Merge the separate col_category dataframes
 df_counties_long = df_counties_longs[0]
 for ind in range(1,len(df_counties_longs)):
     df_counties_long = pd.merge(left=df_counties_long, right=df_counties_longs[ind], how="outer", on=(cols_to_keep+["Year"]) )
@@ -315,7 +351,7 @@ df_counties_long = pd.merge(left=df_counties_long,
                    how="left", on=cols_to_keep)
 
 
-# In[89]:
+# In[ ]:
 
 
 df_counties_long
@@ -323,7 +359,7 @@ df_counties_long
 
 # ## Set up for summaries and save sums
 
-# In[111]:
+# In[ ]:
 
 
 # sorted_moran_values = df_counties_wide["Moran I for ASC billing fraction"].unique()
@@ -333,7 +369,7 @@ sorted_moran_values_all = sorted_moran_values + ["All"]   #[pd.IndexSlice[:]]  #
 moran_frequencies = df_counties_wide["Moran I for ASC billing fraction"].value_counts()[sorted_moran_values]
 
 
-# In[134]:
+# In[ ]:
 
 
 summable_groups = [col for col in df_counties_wide.columns if "total" in col.lower()]
@@ -349,7 +385,7 @@ with pd.option_context('display.float_format', '{:,.0f}'.format):
 save_df(df_wide_sums, "df_wide_sums")
 
 
-# In[142]:
+# In[ ]:
 
 
 get_ipython().system('ls outputs/2022_11_20-RSY-geospatial_ENT_analysis_v03 ')
@@ -357,19 +393,19 @@ get_ipython().system('ls outputs/2022_11_20-RSY-geospatial_ENT_analysis_v03 ')
 
 # ## Create summary data by Moran category
 
-# In[130]:
+# In[ ]:
 
 
-categories = ["Total Number of Services","Total Medicare Payment Amount", "% ASC Procedures", "% ASC Billing" ]
+col_categories = ["Total Number of Services","Total Medicare Payment Amount", "% ASC Procedures", "% ASC Billing" ]
 
 df_counties_with_slope = df_counties_wide.copy()
 # Calculate regression and sum and mean from individual year later
-for category in categories:
-    new_df = df_counties_with_slope[ [category + ": " + str(yr) for yr in years] ].apply(calc_regression,axis=1, result_type="expand", args=(years,) )
-    df_counties_with_slope[[category+": "+new_col for new_col in new_df.columns ]]=new_df
-# To simplify, drop info for specific years unless it was "Mean" and "Slope" categories we just added
-for category in categories:
-    df_counties_with_slope = df_counties_with_slope.drop(columns=[col for col in df_counties_with_slope.columns if category in col and "Mean" not in col and "Slope" not in col])
+for col_category in col_categories:
+    new_df = df_counties_with_slope[ [col_category + ": " + str(yr) for yr in years] ].apply(calc_regression,axis=1, result_type="expand", args=(years,) )
+    df_counties_with_slope[[col_category+": "+new_col for new_col in new_df.columns ]]=new_df
+# To simplify, drop info for specific years unless it was "Mean" and "Slope" col_categories we just added
+for col_category in col_categories:
+    df_counties_with_slope = df_counties_with_slope.drop(columns=[col for col in df_counties_with_slope.columns if col_category in col and "Mean" not in col and "Slope" not in col])
 
 
 df_counties_summary_dict = {}   # create a dict we will concatenate into a df later
@@ -396,13 +432,13 @@ df_counties_summary = df_counties_summary.loc[sorted_moran_values_all]
 df_counties_long.columns
 
 
-# In[87]:
+# In[ ]:
 
 
 
 
 
-# In[117]:
+# In[ ]:
 
 
 key_cols={
