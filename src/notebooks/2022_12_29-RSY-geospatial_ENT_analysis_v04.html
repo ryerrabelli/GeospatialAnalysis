@@ -14270,7 +14270,7 @@ a.anchor-link {
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[1]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[2]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="c1">#@title ## Base imports</span>
@@ -14486,6 +14486,330 @@ Resolving deltas: 100% (75/75), done.
      </div>
 </div>
 </div>
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h1 id="CMS-API-access">CMS API access<a class="anchor-link" href="#CMS-API-access">&#182;</a></h1>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[3]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-python"><pre><span></span><span class="c1"># For the &quot;Medicare Physician &amp; Other Practitioners - by Provider and Service&quot; database</span>
+<span class="c1"># https://data.cms.gov/provider-summary-by-type-of-service/medicare-physician-other-practitioners/medicare-physician-other-practitioners-by-provider-and-service</span>
+
+<span class="n">CMS_dataset_uuids</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">2019</span><span class="p">:</span>	<span class="s2">&quot;5fccd951-9538-48a7-9075-6f02b9867868&quot;</span><span class="p">,</span>
+    <span class="mi">2018</span><span class="p">:</span>	<span class="s2">&quot;02c0692d-e2d9-4714-80c7-a1d16d72ec66&quot;</span><span class="p">,</span>
+    <span class="mi">2017</span><span class="p">:</span>	<span class="s2">&quot;7ebc578d-c2c7-46fd-8cc8-1b035eba7218&quot;</span><span class="p">,</span>
+    <span class="mi">2016</span><span class="p">:</span>	<span class="s2">&quot;5055d307-4fb3-4474-adbb-a11f4182ee35&quot;</span><span class="p">,</span>
+    <span class="mi">2015</span><span class="p">:</span>	<span class="s2">&quot;0ccba18d-b821-47c6-bb55-269b78921637&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+<span class="c1"># Column categories</span>
+<span class="c1">#https://data.cms.gov/resources/medicare-physician-other-practitioners-by-provider-and-service-data-dictionary</span>
+<span class="sd">&quot;&quot;&quot;Rndrng_NPI	TEXT</span>
+<span class="sd">Rndrng_Prvdr_Last_Org_Name	TEXT</span>
+<span class="sd">Rndrng_Prvdr_First_Name	TEXT</span>
+<span class="sd">Rndrng_Prvdr_MI	TEXT</span>
+<span class="sd">Rndrng_Prvdr_Crdntls	TEXT</span>
+<span class="sd">Rndrng_Prvdr_Gndr	TEXT</span>
+<span class="sd">Rndrng_Prvdr_Ent_Cd	TEXT</span>
+<span class="sd">Rndrng_Prvdr_St1	TEXT</span>
+<span class="sd">Rndrng_Prvdr_St2	TEXT</span>
+<span class="sd">Rndrng_Prvdr_City	TEXT</span>
+<span class="sd">Rndrng_Prvdr_State_Abrvtn	TEXT</span>
+<span class="sd">Rndrng_Prvdr_State_FIPS	TEXT</span>
+<span class="sd">Rndrng_Prvdr_Zip5	TEXT</span>
+<span class="sd">Rndrng_Prvdr_RUCA	TEXT</span>
+<span class="sd">Rndrng_Prvdr_RUCA_Desc	TEXT</span>
+<span class="sd">Rndrng_Prvdr_Cntry	TEXT</span>
+<span class="sd">Rndrng_Prvdr_Type	TEXT</span>
+<span class="sd">Rndrng_Prvdr_Mdcr_Prtcptg_Ind	TEXT</span>
+<span class="sd">HCPCS_Cd	TEXT</span>
+<span class="sd">HCPCS_Desc	TEXT</span>
+<span class="sd">HCPCS_Drug_Ind	TEXT</span>
+<span class="sd">Place_Of_Srvc	TEXT</span>
+<span class="sd">Tot_Benes	NUMERIC</span>
+<span class="sd">Tot_Srvcs	NUMERIC</span>
+<span class="sd">Tot_Bene_Day_Srvcs	NUMERIC</span>
+<span class="sd">Avg_Sbmtd_Chrg	NUMERIC</span>
+<span class="sd">Avg_Mdcr_Alowd_Amt	NUMERIC</span>
+<span class="sd">Avg_Mdcr_Pymt_Amt	NUMERIC</span>
+<span class="sd">Avg_Mdcr_Stdzd_Amt	NUMERIC&quot;&quot;&quot;</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[3]:</div>
+
+
+
+
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
+<pre>&#39;Rndrng_NPI\tTEXT\nRndrng_Prvdr_Last_Org_Name\tTEXT\nRndrng_Prvdr_First_Name\tTEXT\nRndrng_Prvdr_MI\tTEXT\nRndrng_Prvdr_Crdntls\tTEXT\nRndrng_Prvdr_Gndr\tTEXT\nRndrng_Prvdr_Ent_Cd\tTEXT\nRndrng_Prvdr_St1\tTEXT\nRndrng_Prvdr_St2\tTEXT\nRndrng_Prvdr_City\tTEXT\nRndrng_Prvdr_State_Abrvtn\tTEXT\nRndrng_Prvdr_State_FIPS\tTEXT\nRndrng_Prvdr_Zip5\tTEXT\nRndrng_Prvdr_RUCA\tTEXT\nRndrng_Prvdr_RUCA_Desc\tTEXT\nRndrng_Prvdr_Cntry\tTEXT\nRndrng_Prvdr_Type\tTEXT\nRndrng_Prvdr_Mdcr_Prtcptg_Ind\tTEXT\nHCPCS_Cd\tTEXT\nHCPCS_Desc\tTEXT\nHCPCS_Drug_Ind\tTEXT\nPlace_Of_Srvc\tTEXT\nTot_Benes\tNUMERIC\nTot_Srvcs\tNUMERIC\nTot_Bene_Day_Srvcs\tNUMERIC\nAvg_Sbmtd_Chrg\tNUMERIC\nAvg_Mdcr_Alowd_Amt\tNUMERIC\nAvg_Mdcr_Pymt_Amt\tNUMERIC\nAvg_Mdcr_Stdzd_Amt\tNUMERIC&#39;</pre>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[19]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-python"><pre><span></span><span class="n">uuid</span> <span class="o">=</span> <span class="n">CMS_dataset_uuids</span><span class="p">[</span><span class="mi">2019</span><span class="p">]</span>
+<span class="n">query</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;column&quot;</span><span class="p">:</span><span class="s2">&quot;HCPCS_Cd,HCPCS_Desc,Tot_Benes&quot;</span><span class="p">,</span> 
+    <span class="c1">#&quot;group_by&quot;:&quot;HCPCS_Cd&quot;,</span>
+    <span class="s2">&quot;offset&quot;</span><span class="p">:</span><span class="mi">10000</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;keyword&quot;</span><span class="p">:</span><span class="s2">&quot;anesthesia&quot;</span>
+    <span class="p">}</span>
+<span class="c1">#url = f&quot;https://data.cms.gov/provider-data/api/1/metastore/schemas/dataset/{uuid}/data?column=Rndrng_Prvdr_State_FIPS&amp;offset=0&amp;size=10&quot;</span>
+<span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://data.cms.gov/data-api/v1/dataset/</span><span class="si">{</span><span class="n">uuid</span><span class="si">}</span><span class="s2">/data/stats&quot;</span>
+<span class="c1">#url = f&quot;https://data.cms.gov/data-api/v1/dataset/{uuid}/data?column=Rndrng_Prvdr_State_FIPS&amp;offset=0&amp;size=10&quot;</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">query</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+    <span class="c1">#display(pd.DataFrame.from_dict(response.json()))</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>{&#39;found_rows&#39;: 279625, &#39;total_rows&#39;: 10140228}
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-python"><pre><span></span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[36]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-python"><pre><span></span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[36]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+
+  <div id="df-2f986c77-e4ff-4941-b707-92f7242ddc56">
+    <div class="colab-df-container">
+      <div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Rndrng_NPI</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1003000126</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1003000126</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1003000126</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1003000126</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1003000126</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>1003000126</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>1003000126</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>1003000126</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>1003000126</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>1003000134</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+      <button class="colab-df-convert" onclick="convertToInteractive('df-2f986c77-e4ff-4941-b707-92f7242ddc56')"
+              title="Convert this dataframe to an interactive table."
+              style="display:none;">
+        
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+       width="24px">
+    <path d="M0 0h24v24H0V0z" fill="none"/>
+    <path d="M18.56 5.44l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94zm-11 1L8.5 8.5l.94-2.06 2.06-.94-2.06-.94L8.5 2.5l-.94 2.06-2.06.94zm10 10l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94z"/><path d="M17.41 7.96l-1.37-1.37c-.4-.4-.92-.59-1.43-.59-.52 0-1.04.2-1.43.59L10.3 9.45l-7.72 7.72c-.78.78-.78 2.05 0 2.83L4 21.41c.39.39.9.59 1.41.59.51 0 1.02-.2 1.41-.59l7.78-7.78 2.81-2.81c.8-.78.8-2.07 0-2.86zM5.41 20L4 18.59l7.72-7.72 1.47 1.35L5.41 20z"/>
+  </svg>
+      </button>
+      
+  <style>
+    .colab-df-container {
+      display:flex;
+      flex-wrap:wrap;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+      <script>
+        const buttonEl =
+          document.querySelector('#df-2f986c77-e4ff-4941-b707-92f7242ddc56 button.colab-df-convert');
+        buttonEl.style.display =
+          google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+        async function convertToInteractive(key) {
+          const element = document.querySelector('#df-2f986c77-e4ff-4941-b707-92f7242ddc56');
+          const dataTable =
+            await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                     [key], {});
+          if (!dataTable) return;
+
+          const docLinkHtml = 'Like what you see? Visit the ' +
+            '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+            + ' to learn more about interactive tables.';
+          element.innerHTML = '';
+          dataTable['output_type'] = 'display_data';
+          await google.colab.output.renderOutput(dataTable, element);
+          const docLink = document.createElement('div');
+          docLink.innerHTML = docLinkHtml;
+          element.appendChild(docLink);
+        }
+      </script>
+    </div>
+  </div>
+  
+</div>
+
+</div>
+
+</div>
+
 </div>
 
 </div>

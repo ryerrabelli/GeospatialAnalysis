@@ -5,7 +5,7 @@
 
 # # Set up
 
-# In[1]:
+# In[2]:
 
 
 #@title ## Base imports
@@ -137,6 +137,87 @@ def save_figure(fig, file_name:str, animated=False):
         fig.write_image( get_path_to_save(save_filename=file_name, extension="svg"))
         fig.write_image( get_path_to_save(save_filename=file_name, extension="png") )
         fig.write_image( get_path_to_save(save_filename=file_name, extension="jpg") )
+
+
+# # CMS API access
+
+# In[3]:
+
+
+
+# For the "Medicare Physician & Other Practitioners - by Provider and Service" database
+# https://data.cms.gov/provider-summary-by-type-of-service/medicare-physician-other-practitioners/medicare-physician-other-practitioners-by-provider-and-service
+
+CMS_dataset_uuids = {
+    2019:	"5fccd951-9538-48a7-9075-6f02b9867868",
+    2018:	"02c0692d-e2d9-4714-80c7-a1d16d72ec66",
+    2017:	"7ebc578d-c2c7-46fd-8cc8-1b035eba7218",
+    2016:	"5055d307-4fb3-4474-adbb-a11f4182ee35",
+    2015:	"0ccba18d-b821-47c6-bb55-269b78921637",
+    }
+
+# Column categories
+#https://data.cms.gov/resources/medicare-physician-other-practitioners-by-provider-and-service-data-dictionary
+"""Rndrng_NPI	TEXT
+Rndrng_Prvdr_Last_Org_Name	TEXT
+Rndrng_Prvdr_First_Name	TEXT
+Rndrng_Prvdr_MI	TEXT
+Rndrng_Prvdr_Crdntls	TEXT
+Rndrng_Prvdr_Gndr	TEXT
+Rndrng_Prvdr_Ent_Cd	TEXT
+Rndrng_Prvdr_St1	TEXT
+Rndrng_Prvdr_St2	TEXT
+Rndrng_Prvdr_City	TEXT
+Rndrng_Prvdr_State_Abrvtn	TEXT
+Rndrng_Prvdr_State_FIPS	TEXT
+Rndrng_Prvdr_Zip5	TEXT
+Rndrng_Prvdr_RUCA	TEXT
+Rndrng_Prvdr_RUCA_Desc	TEXT
+Rndrng_Prvdr_Cntry	TEXT
+Rndrng_Prvdr_Type	TEXT
+Rndrng_Prvdr_Mdcr_Prtcptg_Ind	TEXT
+HCPCS_Cd	TEXT
+HCPCS_Desc	TEXT
+HCPCS_Drug_Ind	TEXT
+Place_Of_Srvc	TEXT
+Tot_Benes	NUMERIC
+Tot_Srvcs	NUMERIC
+Tot_Bene_Day_Srvcs	NUMERIC
+Avg_Sbmtd_Chrg	NUMERIC
+Avg_Mdcr_Alowd_Amt	NUMERIC
+Avg_Mdcr_Pymt_Amt	NUMERIC
+Avg_Mdcr_Stdzd_Amt	NUMERIC"""   
+
+
+# In[19]:
+
+
+uuid = CMS_dataset_uuids[2019]
+query = {
+    "column":"HCPCS_Cd,HCPCS_Desc,Tot_Benes", 
+    #"group_by":"HCPCS_Cd",
+    "offset":10000, "size":10, "keyword":"anesthesia"
+    }
+#url = f"https://data.cms.gov/provider-data/api/1/metastore/schemas/dataset/{uuid}/data?column=Rndrng_Prvdr_State_FIPS&offset=0&size=10"
+url = f"https://data.cms.gov/data-api/v1/dataset/{uuid}/data/stats"
+#url = f"https://data.cms.gov/data-api/v1/dataset/{uuid}/data?column=Rndrng_Prvdr_State_FIPS&offset=0&size=10"
+response = requests.get(url, params=query)
+
+if response.status_code == 200:
+    print(response.json())
+    #display(pd.DataFrame.from_dict(response.json()))
+
+
+# In[ ]:
+
+
+
+
+
+# In[36]:
+
+
+
 
 
 # # Procedures analysis
