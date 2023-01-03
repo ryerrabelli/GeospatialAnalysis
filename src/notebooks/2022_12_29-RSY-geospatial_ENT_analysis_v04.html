@@ -14283,11 +14283,14 @@ a.anchor-link {
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="n">idx</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">IndexSlice</span>
 <span class="kn">import</span> <span class="nn">plotly.express</span> <span class="k">as</span> <span class="nn">px</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+
 
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">import</span> <span class="nn">urllib.request</span>
 <span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">copy</span>   <span class="c1"># to perform dict deep copy</span>
 </pre></div>
 
      </div>
@@ -14298,7 +14301,7 @@ a.anchor-link {
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[2]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[3]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="c1">#@title ## Option 1) Mount google drive and import my code</span>
@@ -14345,7 +14348,7 @@ a.anchor-link {
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
 <pre>/root
 Mounted at /content/gdrive
-/content/gdrive/.shortcut-targets-by-id/1okL5s1HTQUWqKodPSVNP_RsK0o81IH5E/PythonProjects/GeospatialAnalysis
+/content/gdrive/MyDrive/Computer Backups/Rahul Yerrabelli drive/PythonProjects/GeospatialAnalysis
 </pre>
 </div>
 </div>
@@ -14428,9 +14431,12 @@ Resolving deltas: 100% (75/75), done.
         <span class="s2">&quot;Mean&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
         <span class="s2">&quot;Sum&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
         <span class="s2">&quot;Slope&quot;</span><span class="p">:</span> <span class="n">regress</span><span class="o">.</span><span class="n">slope</span><span class="p">,</span> 
+        <span class="s2">&quot;SlopeSE&quot;</span><span class="p">:</span> <span class="n">regress</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
         <span class="s2">&quot;Intercept&quot;</span><span class="p">:</span> <span class="n">regress</span><span class="o">.</span><span class="n">intercept</span><span class="p">,</span> 
+        <span class="s2">&quot;InterceptSE&quot;</span><span class="p">:</span> <span class="n">regress</span><span class="o">.</span><span class="n">intercept_stderr</span><span class="p">,</span>
         <span class="s2">&quot;R&quot;</span><span class="p">:</span> <span class="n">regress</span><span class="o">.</span><span class="n">rvalue</span><span class="p">,</span> 
         <span class="s2">&quot;p&quot;</span><span class="p">:</span> <span class="n">regress</span><span class="o">.</span><span class="n">pvalue</span><span class="p">,</span> 
+         
         <span class="p">})</span>
 
 
@@ -14496,7 +14502,7 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[3]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[33]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="c1"># For the &quot;Medicare Physician &amp; Other Practitioners - by Provider and Service&quot; database</span>
@@ -14556,7 +14562,7 @@ Resolving deltas: 100% (75/75), done.
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[3]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[33]:</div>
 
 
 
@@ -14571,26 +14577,125 @@ Resolving deltas: 100% (75/75), done.
 
 </div>
 
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[32]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-python"><pre><span></span><span class="k">def</span> <span class="nf">access_CMS_data</span><span class="p">(</span><span class="n">years</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">print_checkpoints</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">100000</span><span class="p">,</span> <span class="n">return_pandas</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="n">records</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">years</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">years</span> <span class="o">=</span> <span class="n">CMS_dataset_uuids</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">year</span> <span class="ow">in</span> <span class="n">years</span><span class="p">:</span>
+        <span class="n">uuid</span> <span class="o">=</span> <span class="n">CMS_dataset_uuids</span><span class="p">[</span><span class="n">year</span><span class="p">]</span>
+        <span class="n">url_data</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://data.cms.gov/data-api/v1/dataset/</span><span class="si">{</span><span class="n">uuid</span><span class="si">}</span><span class="s2">/data&quot;</span>
+        <span class="n">url_stats</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">url_data</span><span class="si">}</span><span class="s2">/stats&quot;</span>
+        <span class="n">query_stats</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="n">stats_response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url_stats</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">query_stats</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">stats_response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="n">stats_response_json</span> <span class="o">=</span> <span class="n">stats_response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+            <span class="n">found_rows_ct</span> <span class="o">=</span> <span class="n">stats_response_json</span><span class="p">[</span><span class="s2">&quot;found_rows&quot;</span><span class="p">]</span> 
+            <span class="n">total_rows_ct</span> <span class="o">=</span> <span class="n">stats_response_json</span><span class="p">[</span><span class="s2">&quot;total_rows&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">print_checkpoints</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="n">stats_response_json</span><span class="p">)</span>
+
+            <span class="n">query_offset</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">query_size</span> <span class="o">=</span> <span class="n">query</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">]</span>
+            <span class="n">records</span><span class="p">[</span><span class="n">year</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">while</span> <span class="n">query_offset</span> <span class="o">&lt;</span> <span class="n">found_rows_ct</span><span class="p">:</span>
+                <span class="n">query_data</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+                <span class="n">data_response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url_data</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">query_data</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">data_response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+                    <span class="n">data_response_json</span> <span class="o">=</span> <span class="n">data_response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+                    <span class="c1"># append lists</span>
+                    <span class="k">if</span> <span class="n">print_checkpoints</span> <span class="ow">and</span> <span class="n">query_offset</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;query_offset&quot;</span><span class="p">,</span> <span class="n">query_offset</span><span class="p">)</span>
+                    <span class="n">records</span><span class="p">[</span><span class="n">year</span><span class="p">]</span> <span class="o">=</span> <span class="n">records</span><span class="p">[</span><span class="n">year</span><span class="p">]</span> <span class="o">+</span> <span class="n">data_response_json</span>
+                <span class="n">query_offset</span> <span class="o">+=</span> <span class="n">query_size</span>
+    
+    <span class="k">if</span> <span class="n">return_pandas</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">year_of_records</span><span class="p">)</span> <span class="k">for</span> <span class="n">year_of_records</span> <span class="ow">in</span> <span class="n">records</span><span class="o">.</span><span class="n">values</span><span class="p">()],</span> <span class="n">keys</span><span class="o">=</span><span class="n">records</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># return as dict of list</span>
+        <span class="k">return</span> <span class="n">records</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[67]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-python"><pre><span></span><span class="n">a</span><span class="o">=</span><span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">()</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[19]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[69]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-python"><pre><span></span><span class="n">a</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[69]:</div>
+
+
+
+
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
+<pre>defaultdict(None, {})</pre>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[35]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">uuid</span> <span class="o">=</span> <span class="n">CMS_dataset_uuids</span><span class="p">[</span><span class="mi">2019</span><span class="p">]</span>
 <span class="n">query</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;column&quot;</span><span class="p">:</span><span class="s2">&quot;HCPCS_Cd,HCPCS_Desc,Tot_Benes&quot;</span><span class="p">,</span> 
     <span class="c1">#&quot;group_by&quot;:&quot;HCPCS_Cd&quot;,</span>
-    <span class="s2">&quot;offset&quot;</span><span class="p">:</span><span class="mi">10000</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;keyword&quot;</span><span class="p">:</span><span class="s2">&quot;anesthesia&quot;</span>
+    <span class="s2">&quot;offset&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;keyword&quot;</span><span class="p">:</span><span class="s2">&quot;30140&quot;</span>
     <span class="p">}</span>
 <span class="c1">#url = f&quot;https://data.cms.gov/provider-data/api/1/metastore/schemas/dataset/{uuid}/data?column=Rndrng_Prvdr_State_FIPS&amp;offset=0&amp;size=10&quot;</span>
-<span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://data.cms.gov/data-api/v1/dataset/</span><span class="si">{</span><span class="n">uuid</span><span class="si">}</span><span class="s2">/data/stats&quot;</span>
+<span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://data.cms.gov/data-api/v1/dataset/</span><span class="si">{</span><span class="n">uuid</span><span class="si">}</span><span class="s2">/data&quot;</span>
 <span class="c1">#url = f&quot;https://data.cms.gov/data-api/v1/dataset/{uuid}/data?column=Rndrng_Prvdr_State_FIPS&amp;offset=0&amp;size=10&quot;</span>
 <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">query</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
-    <span class="c1">#display(pd.DataFrame.from_dict(response.json()))</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()))</span>
 </pre></div>
 
      </div>
@@ -14610,58 +14715,21 @@ Resolving deltas: 100% (75/75), done.
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>{&#39;found_rows&#39;: 279625, &#39;total_rows&#39;: 10140228}
+<pre>[{&#39;HCPCS_Cd&#39;: &#39;30140&#39;, &#39;HCPCS_Desc&#39;: &#39;Removal of nasal air passage&#39;, &#39;Tot_Benes&#39;: &#39;13&#39;}, {&#39;HCPCS_Cd&#39;: &#39;30140&#39;, &#39;HCPCS_Desc&#39;: &#39;Removal of nasal air passage&#39;, &#39;Tot_Benes&#39;: &#39;16&#39;}, {&#39;HCPCS_Cd&#39;: &#39;30140&#39;, &#39;HCPCS_Desc&#39;: &#39;Removal of nasal air passage&#39;, &#39;Tot_Benes&#39;: &#39;21&#39;}, {&#39;HCPCS_Cd&#39;: &#39;30140&#39;, &#39;HCPCS_Desc&#39;: &#39;Removal of nasal air passage&#39;, &#39;Tot_Benes&#39;: &#39;16&#39;}, {&#39;HCPCS_Cd&#39;: &#39;30140&#39;, &#39;HCPCS_Desc&#39;: &#39;Removal of nasal air passage&#39;, &#39;Tot_Benes&#39;: &#39;16&#39;}, {&#39;HCPCS_Cd&#39;: &#39;30140&#39;, &#39;HCPCS_Desc&#39;: &#39;Removal of nasal air passage&#39;, &#39;Tot_Benes&#39;: &#39;12&#39;}, {&#39;HCPCS_Cd&#39;: &#39;30140&#39;, &#39;HCPCS_Desc&#39;: &#39;Removal of nasal air passage&#39;, &#39;Tot_Benes&#39;: &#39;13&#39;}, {&#39;HCPCS_Cd&#39;: &#39;30140&#39;, &#39;HCPCS_Desc&#39;: &#39;Removal of nasal air passage&#39;, &#39;Tot_Benes&#39;: &#39;15&#39;}, {&#39;HCPCS_Cd&#39;: &#39;30140&#39;, &#39;HCPCS_Desc&#39;: &#39;Removal of nasal air passage&#39;, &#39;Tot_Benes&#39;: &#39;60&#39;}, {&#39;HCPCS_Cd&#39;: &#39;30140&#39;, &#39;HCPCS_Desc&#39;: &#39;Removal of nasal air passage&#39;, &#39;Tot_Benes&#39;: &#39;13&#39;}]
 </pre>
 </div>
 </div>
 
-</div>
-
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-python"><pre><span></span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[36]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-python"><pre><span></span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-<div class="jp-Cell-outputWrapper">
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[36]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
 
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
 
-  <div id="df-2f986c77-e4ff-4941-b707-92f7242ddc56">
+  <div id="df-fc367e09-b43a-4b06-9806-d3f2ad6fad09">
     <div class="colab-df-container">
       <div>
 <style scoped>
@@ -14681,54 +14749,76 @@ Resolving deltas: 100% (75/75), done.
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>Rndrng_NPI</th>
+      <th>HCPCS_Cd</th>
+      <th>HCPCS_Desc</th>
+      <th>Tot_Benes</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
-      <td>1003000126</td>
+      <td>30140</td>
+      <td>Removal of nasal air passage</td>
+      <td>13</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>1003000126</td>
+      <td>30140</td>
+      <td>Removal of nasal air passage</td>
+      <td>16</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>1003000126</td>
+      <td>30140</td>
+      <td>Removal of nasal air passage</td>
+      <td>21</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>1003000126</td>
+      <td>30140</td>
+      <td>Removal of nasal air passage</td>
+      <td>16</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>1003000126</td>
+      <td>30140</td>
+      <td>Removal of nasal air passage</td>
+      <td>16</td>
     </tr>
     <tr>
       <th>5</th>
-      <td>1003000126</td>
+      <td>30140</td>
+      <td>Removal of nasal air passage</td>
+      <td>12</td>
     </tr>
     <tr>
       <th>6</th>
-      <td>1003000126</td>
+      <td>30140</td>
+      <td>Removal of nasal air passage</td>
+      <td>13</td>
     </tr>
     <tr>
       <th>7</th>
-      <td>1003000126</td>
+      <td>30140</td>
+      <td>Removal of nasal air passage</td>
+      <td>15</td>
     </tr>
     <tr>
       <th>8</th>
-      <td>1003000126</td>
+      <td>30140</td>
+      <td>Removal of nasal air passage</td>
+      <td>60</td>
     </tr>
     <tr>
       <th>9</th>
-      <td>1003000134</td>
+      <td>30140</td>
+      <td>Removal of nasal air passage</td>
+      <td>13</td>
     </tr>
   </tbody>
 </table>
 </div>
-      <button class="colab-df-convert" onclick="convertToInteractive('df-2f986c77-e4ff-4941-b707-92f7242ddc56')"
+      <button class="colab-df-convert" onclick="convertToInteractive('df-fc367e09-b43a-4b06-9806-d3f2ad6fad09')"
               title="Convert this dataframe to an interactive table."
               style="display:none;">
         
@@ -14779,12 +14869,12 @@ Resolving deltas: 100% (75/75), done.
 
       <script>
         const buttonEl =
-          document.querySelector('#df-2f986c77-e4ff-4941-b707-92f7242ddc56 button.colab-df-convert');
+          document.querySelector('#df-fc367e09-b43a-4b06-9806-d3f2ad6fad09 button.colab-df-convert');
         buttonEl.style.display =
           google.colab.kernel.accessAllowed ? 'block' : 'none';
 
         async function convertToInteractive(key) {
-          const element = document.querySelector('#df-2f986c77-e4ff-4941-b707-92f7242ddc56');
+          const element = document.querySelector('#df-fc367e09-b43a-4b06-9806-d3f2ad6fad09');
           const dataTable =
             await google.colab.kernel.invokeFunction('convertToInteractive',
                                                      [key], {});
@@ -14812,6 +14902,367 @@ Resolving deltas: 100% (75/75), done.
 
 </div>
 
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[16]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-python"><pre><span></span><span class="n">query</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1">#     &quot;column&quot;:&quot;HCPCS_Cd,HCPCS_Desc,Tot_Benes&quot;, </span>
+    <span class="c1"># </span>
+    <span class="s2">&quot;column&quot;</span><span class="p">:</span><span class="s2">&quot;HCPCS_Cd,HCPCS_Desc,HCPCS_Drug_Ind,Place_Of_Srvc,Tot_Benes,Tot_Srvcs,Tot_Bene_Day_Srvcs,Avg_Sbmtd_Chrg,Avg_Mdcr_Alowd_Amt,Avg_Mdcr_Pymt_Amt,Avg_Mdcr_Stdzd_Am&quot;</span><span class="p">,</span> 
+    <span class="c1">#&quot;group_by&quot;:&quot;HCPCS_Cd&quot;,</span>
+    <span class="s2">&quot;offset&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span><span class="mi">200</span><span class="p">,</span> <span class="s2">&quot;keyword&quot;</span><span class="p">:</span><span class="s2">&quot;60240&quot;</span>
+    <span class="p">}</span>
+<span class="n">records</span> <span class="o">=</span> <span class="n">access_CMS_data</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">query</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>{&#39;found_rows&#39;: 89, &#39;total_rows&#39;: 10140228}
+query_offset 0
+{&#39;found_rows&#39;: 108, &#39;total_rows&#39;: 9961865}
+query_offset 0
+{&#39;found_rows&#39;: 108, &#39;total_rows&#39;: 9847443}
+query_offset 0
+{&#39;found_rows&#39;: 167, &#39;total_rows&#39;: 9714896}
+query_offset 0
+{&#39;found_rows&#39;: 168, &#39;total_rows&#39;: 9496848}
+query_offset 0
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[18]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-python"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">records</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+
+  <div id="df-9bde1282-2252-475d-b94c-3d23c8e69753">
+    <div class="colab-df-container">
+      <div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th></th>
+      <th>HCPCS_Cd</th>
+      <th>HCPCS_Desc</th>
+      <th>HCPCS_Drug_Ind</th>
+      <th>Place_Of_Srvc</th>
+      <th>Tot_Benes</th>
+      <th>Tot_Srvcs</th>
+      <th>Tot_Bene_Day_Srvcs</th>
+      <th>Avg_Sbmtd_Chrg</th>
+      <th>Avg_Mdcr_Alowd_Amt</th>
+      <th>Avg_Mdcr_Pymt_Amt</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="5" valign="top">2019</th>
+      <th>0</th>
+      <td>60240</td>
+      <td>Removal of thyroid</td>
+      <td>N</td>
+      <td>F</td>
+      <td>18</td>
+      <td>18</td>
+      <td>18</td>
+      <td>4096</td>
+      <td>126</td>
+      <td>100.39</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>60240</td>
+      <td>Removal of thyroid</td>
+      <td>N</td>
+      <td>F</td>
+      <td>13</td>
+      <td>13</td>
+      <td>13</td>
+      <td>5807.6923077</td>
+      <td>906.30846154</td>
+      <td>724.50692308</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>60240</td>
+      <td>Removal of thyroid</td>
+      <td>N</td>
+      <td>F</td>
+      <td>16</td>
+      <td>16</td>
+      <td>16</td>
+      <td>1935</td>
+      <td>936.269375</td>
+      <td>739.449375</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>60240</td>
+      <td>Removal of thyroid</td>
+      <td>N</td>
+      <td>F</td>
+      <td>13</td>
+      <td>13</td>
+      <td>13</td>
+      <td>2375.8461538</td>
+      <td>826.54538462</td>
+      <td>651.52153846</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>60240</td>
+      <td>Removal of thyroid</td>
+      <td>N</td>
+      <td>F</td>
+      <td>21</td>
+      <td>21</td>
+      <td>21</td>
+      <td>2689.7333333</td>
+      <td>819.35142857</td>
+      <td>650.34190476</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th rowspan="5" valign="top">2015</th>
+      <th>163</th>
+      <td>60240</td>
+      <td>Removal of thyroid</td>
+      <td>N</td>
+      <td>F</td>
+      <td>15</td>
+      <td>15</td>
+      <td>15</td>
+      <td>2856</td>
+      <td>838.11933333</td>
+      <td>659.96</td>
+    </tr>
+    <tr>
+      <th>164</th>
+      <td>60240</td>
+      <td>Removal of thyroid</td>
+      <td>N</td>
+      <td>F</td>
+      <td>13</td>
+      <td>13</td>
+      <td>13</td>
+      <td>4974</td>
+      <td>1021.3253846</td>
+      <td>813.74076923</td>
+    </tr>
+    <tr>
+      <th>165</th>
+      <td>60240</td>
+      <td>Removal of thyroid</td>
+      <td>N</td>
+      <td>F</td>
+      <td>12</td>
+      <td>12</td>
+      <td>12</td>
+      <td>2500</td>
+      <td>961.99416667</td>
+      <td>766.34166667</td>
+    </tr>
+    <tr>
+      <th>166</th>
+      <td>60240</td>
+      <td>Removal of thyroid</td>
+      <td>N</td>
+      <td>F</td>
+      <td>11</td>
+      <td>11</td>
+      <td>11</td>
+      <td>9500.1227273</td>
+      <td>2213.83</td>
+      <td>1763.86</td>
+    </tr>
+    <tr>
+      <th>167</th>
+      <td>60240</td>
+      <td>Removal of thyroid</td>
+      <td>N</td>
+      <td>F</td>
+      <td>12</td>
+      <td>12</td>
+      <td>12</td>
+      <td>2890.5</td>
+      <td>783.83</td>
+      <td>624.51666667</td>
+    </tr>
+  </tbody>
+</table>
+<p>640 rows × 10 columns</p>
+</div>
+      <button class="colab-df-convert" onclick="convertToInteractive('df-9bde1282-2252-475d-b94c-3d23c8e69753')"
+              title="Convert this dataframe to an interactive table."
+              style="display:none;">
+        
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+       width="24px">
+    <path d="M0 0h24v24H0V0z" fill="none"/>
+    <path d="M18.56 5.44l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94zm-11 1L8.5 8.5l.94-2.06 2.06-.94-2.06-.94L8.5 2.5l-.94 2.06-2.06.94zm10 10l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94z"/><path d="M17.41 7.96l-1.37-1.37c-.4-.4-.92-.59-1.43-.59-.52 0-1.04.2-1.43.59L10.3 9.45l-7.72 7.72c-.78.78-.78 2.05 0 2.83L4 21.41c.39.39.9.59 1.41.59.51 0 1.02-.2 1.41-.59l7.78-7.78 2.81-2.81c.8-.78.8-2.07 0-2.86zM5.41 20L4 18.59l7.72-7.72 1.47 1.35L5.41 20z"/>
+  </svg>
+      </button>
+      
+  <style>
+    .colab-df-container {
+      display:flex;
+      flex-wrap:wrap;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+      <script>
+        const buttonEl =
+          document.querySelector('#df-9bde1282-2252-475d-b94c-3d23c8e69753 button.colab-df-convert');
+        buttonEl.style.display =
+          google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+        async function convertToInteractive(key) {
+          const element = document.querySelector('#df-9bde1282-2252-475d-b94c-3d23c8e69753');
+          const dataTable =
+            await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                     [key], {});
+          if (!dataTable) return;
+
+          const docLinkHtml = 'Like what you see? Visit the ' +
+            '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+            + ' to learn more about interactive tables.';
+          element.innerHTML = '';
+          dataTable['output_type'] = 'display_data';
+          await google.colab.output.renderOutput(dataTable, element);
+          const docLink = document.createElement('div');
+          docLink.innerHTML = docLinkHtml;
+          element.appendChild(docLink);
+        }
+      </script>
+    </div>
+  </div>
+  
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[97]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-python"><pre><span></span><span class="n">save_df</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="s2">&quot;records_for_HCPCS=60240&quot;</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
@@ -14832,7 +15283,7 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[51]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">df_procedures_orig</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;data/1_renamed/procedure_specific_data.csv&quot;</span><span class="p">,</span>
@@ -14856,10 +15307,10 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="Clean-df-and-recalculate-regression">Clean df and recalculate regression<a class="anchor-link" href="#Clean-df-and-recalculate-regression">&#182;</a></h2>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[54]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">df_procedures_clean</span> <span class="o">=</span> <span class="n">df_procedures_orig</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s2">&quot;Specialty&quot;</span><span class="p">,</span><span class="s2">&quot;Group&quot;</span><span class="p">,</span><span class="s2">&quot;HCPCS Code&quot;</span><span class="p">,</span> <span class="s2">&quot;HCPCS Description&quot;</span><span class="p">])</span>
@@ -14877,22 +15328,10 @@ Resolving deltas: 100% (75/75), done.
 <span class="n">df_procedures_clean</span> <span class="o">=</span> <span class="n">df_procedures_clean</span><span class="p">[</span><span class="nb">sorted</span><span class="p">(</span><span class="n">df_procedures_clean</span><span class="p">)]</span>  <span class="c1"># rearrange cols alphabetically</span>
 
 <span class="n">col_categories</span> <span class="o">=</span> <span class="n">df_procedures_clean</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">levels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1">#[&quot;Total Number of Services&quot;, &quot;Total Medicare Payment Amount&quot;]</span>
-</pre></div>
 
-     </div>
-</div>
-</div>
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[55]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-python"><pre><span></span><span class="n">specialties</span> <span class="o">=</span> <span class="n">df_procedures_clean</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s2">&quot;Specialty&quot;</span><span class="p">)</span>
+<span class="c1"># Make aggregates across the specialties and the groups</span>
+<span class="n">specialties</span> <span class="o">=</span> <span class="n">df_procedures_clean</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s2">&quot;Specialty&quot;</span><span class="p">)</span>
 <span class="n">all_groups</span> <span class="o">=</span> <span class="n">df_procedures_clean</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s2">&quot;Group&quot;</span><span class="p">)</span>
-
 <span class="n">df_procedures_clean</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="s2">&quot;Total&quot;</span><span class="p">,</span><span class="kc">None</span><span class="p">,</span><span class="s2">&quot;Total&quot;</span><span class="p">,</span><span class="s2">&quot;Total&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">df_procedures_clean</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">specialty</span> <span class="ow">in</span> <span class="n">specialties</span><span class="p">:</span>
     <span class="n">df_procedures_clean</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">specialty</span><span class="p">,</span><span class="kc">None</span><span class="p">,</span><span class="s2">&quot;Total&quot;</span><span class="p">,</span><span class="s2">&quot;Total&quot;</span><span class="p">)]</span><span class="o">=</span><span class="n">df_procedures_clean</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">specialty</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
@@ -14921,9 +15360,9 @@ Resolving deltas: 100% (75/75), done.
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>&lt;ipython-input-55-ae95f3eb0667&gt;:10: PerformanceWarning: indexing past lexsort depth may impact performance.
+<pre>&lt;ipython-input-6-4d4c51e67cb3&gt;:25: PerformanceWarning: indexing past lexsort depth may impact performance.
   if df_procedures_clean.loc[(specialty,group)].shape[0] &gt; 1:
-&lt;ipython-input-55-ae95f3eb0667&gt;:11: PerformanceWarning: indexing past lexsort depth may impact performance.
+&lt;ipython-input-6-4d4c51e67cb3&gt;:26: PerformanceWarning: indexing past lexsort depth may impact performance.
   df_procedures_clean.loc[(specialty,group,&#34;Total&#34;,&#34;Total&#34;)]=df_procedures_clean.loc[(specialty,group)].sum()
 </pre>
 </div>
@@ -14936,7 +15375,45 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[56]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[104]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-python"><pre><span></span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
+<pre>&lt;ipython-input-104-b0e429886b16&gt;:9: PerformanceWarning: indexing past lexsort depth may impact performance.
+  if df_procedures_clean.loc[(specialty,group)].shape[0] &gt; 1:
+&lt;ipython-input-104-b0e429886b16&gt;:10: PerformanceWarning: indexing past lexsort depth may impact performance.
+  df_procedures_clean.loc[(specialty,group,&#34;Total&#34;,&#34;Total&#34;)]=df_procedures_clean.loc[(specialty,group)].sum()
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[7]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="c1"># Calculate regression and sum and mean from individual year later</span>
@@ -14985,7 +15462,7 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[57]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[8]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="k">with</span> <span class="n">pd</span><span class="o">.</span><span class="n">option_context</span><span class="p">(</span><span class="s1">&#39;display.float_format&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:,.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">):</span>
@@ -15013,7 +15490,7 @@ Resolving deltas: 100% (75/75), done.
 
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
 
-  <div id="df-e33b69e9-48bb-43be-85ce-0ead16071868">
+  <div id="df-92699f89-8cb3-4804-bb01-5797581bc347">
     <div class="colab-df-container">
       <div>
 <style scoped>
@@ -15052,8 +15529,8 @@ Resolving deltas: 100% (75/75), done.
       <th colspan="5" halign="left">Annual</th>
       <th colspan="5" halign="left">Overall</th>
       <th>...</th>
-      <th colspan="4" halign="left">Annual</th>
-      <th colspan="6" halign="left">Overall</th>
+      <th colspan="2" halign="left">Annual</th>
+      <th colspan="8" halign="left">Overall</th>
     </tr>
     <tr>
       <th></th>
@@ -15068,17 +15545,17 @@ Resolving deltas: 100% (75/75), done.
       <th>Mean</th>
       <th>Sum</th>
       <th>Slope</th>
+      <th>SlopeSE</th>
       <th>Intercept</th>
-      <th>R</th>
       <th>...</th>
-      <th>2016</th>
-      <th>2017</th>
       <th>2018</th>
       <th>2019</th>
       <th>Mean</th>
       <th>Sum</th>
       <th>Slope</th>
+      <th>SlopeSE</th>
       <th>Intercept</th>
+      <th>InterceptSE</th>
       <th>R</th>
       <th>p</th>
     </tr>
@@ -15124,17 +15601,17 @@ Resolving deltas: 100% (75/75), done.
       <td>847,474.44</td>
       <td>4,237,372.20</td>
       <td>98,803.65</td>
+      <td>121,250.54</td>
       <td>-198,439,489.63</td>
-      <td>0.43</td>
       <td>...</td>
-      <td>8,266.00</td>
-      <td>14,608.00</td>
       <td>11,483.00</td>
       <td>6,537.00</td>
       <td>9,214.60</td>
       <td>46,073.00</td>
       <td>593.30</td>
+      <td>1,354.87</td>
       <td>-1,187,471.50</td>
+      <td>2,732,764.10</td>
       <td>0.25</td>
       <td>0.69</td>
     </tr>
@@ -15149,17 +15626,17 @@ Resolving deltas: 100% (75/75), done.
       <td>581,720.04</td>
       <td>2,908,600.22</td>
       <td>37,284.98</td>
+      <td>5,836.31</td>
       <td>-74,622,094.70</td>
-      <td>0.97</td>
       <td>...</td>
-      <td>3,988.00</td>
-      <td>4,310.00</td>
       <td>4,188.00</td>
       <td>4,141.00</td>
       <td>4,052.20</td>
       <td>20,261.00</td>
       <td>121.40</td>
+      <td>64.40</td>
       <td>-240,811.60</td>
+      <td>129,895.04</td>
       <td>0.74</td>
       <td>0.16</td>
     </tr>
@@ -15174,17 +15651,17 @@ Resolving deltas: 100% (75/75), done.
       <td>345,493.53</td>
       <td>1,727,467.67</td>
       <td>36,521.74</td>
+      <td>16,158.20</td>
       <td>-73,318,856.05</td>
-      <td>0.79</td>
       <td>...</td>
-      <td>498.00</td>
-      <td>466.00</td>
       <td>538.00</td>
       <td>468.00</td>
       <td>472.40</td>
       <td>2,362.00</td>
       <td>19.20</td>
+      <td>16.12</td>
       <td>-38,254.00</td>
+      <td>32,516.48</td>
       <td>0.57</td>
       <td>0.32</td>
     </tr>
@@ -15199,17 +15676,17 @@ Resolving deltas: 100% (75/75), done.
       <td>3,898,500.83</td>
       <td>19,492,504.15</td>
       <td>-99,852.42</td>
+      <td>98,116.01</td>
       <td>205,300,825.92</td>
-      <td>-0.51</td>
       <td>...</td>
-      <td>7,518.00</td>
-      <td>7,164.00</td>
       <td>6,646.00</td>
       <td>6,439.00</td>
       <td>7,004.40</td>
       <td>35,022.00</td>
       <td>-250.40</td>
+      <td>75.98</td>
       <td>512,061.20</td>
+      <td>153,249.39</td>
       <td>-0.89</td>
       <td>0.05</td>
     </tr>
@@ -15224,17 +15701,17 @@ Resolving deltas: 100% (75/75), done.
       <td>154,367.65</td>
       <td>771,838.24</td>
       <td>123,401.01</td>
+      <td>35,623.56</td>
       <td>-248,745,467.50</td>
-      <td>0.89</td>
       <td>...</td>
-      <td>0.00</td>
-      <td>0.00</td>
       <td>342.00</td>
       <td>482.00</td>
       <td>164.80</td>
       <td>824.00</td>
       <td>130.60</td>
+      <td>37.83</td>
       <td>-263,255.40</td>
+      <td>76,299.51</td>
       <td>0.89</td>
       <td>0.04</td>
     </tr>
@@ -15278,17 +15755,17 @@ Resolving deltas: 100% (75/75), done.
       <td>4,374,056.64</td>
       <td>21,870,283.20</td>
       <td>680,864.21</td>
+      <td>162,701.88</td>
       <td>-1,368,929,056.95</td>
-      <td>0.92</td>
       <td>...</td>
-      <td>8,394.00</td>
-      <td>9,166.00</td>
       <td>9,227.00</td>
       <td>10,126.00</td>
       <td>8,894.80</td>
       <td>44,474.00</td>
       <td>596.30</td>
+      <td>76.12</td>
       <td>-1,193,842.30</td>
+      <td>153,542.15</td>
       <td>0.98</td>
       <td>0.00</td>
     </tr>
@@ -15303,17 +15780,17 @@ Resolving deltas: 100% (75/75), done.
       <td>433,333.49</td>
       <td>2,166,667.44</td>
       <td>-103,889.11</td>
+      <td>86,960.83</td>
       <td>209,977,666.34</td>
-      <td>-0.57</td>
       <td>...</td>
-      <td>1,421.00</td>
-      <td>1,705.00</td>
       <td>236.00</td>
       <td>274.00</td>
       <td>1,006.20</td>
       <td>5,031.00</td>
       <td>-342.70</td>
+      <td>159.84</td>
       <td>692,232.10</td>
+      <td>322,391.71</td>
       <td>-0.78</td>
       <td>0.12</td>
     </tr>
@@ -15328,17 +15805,17 @@ Resolving deltas: 100% (75/75), done.
       <td>4,807,390.13</td>
       <td>24,036,950.64</td>
       <td>576,975.10</td>
+      <td>218,777.97</td>
       <td>-1,158,951,390.61</td>
-      <td>0.84</td>
       <td>...</td>
-      <td>9,815.00</td>
-      <td>10,871.00</td>
       <td>9,463.00</td>
       <td>10,400.00</td>
       <td>9,901.00</td>
       <td>49,505.00</td>
       <td>253.60</td>
+      <td>233.74</td>
       <td>-501,610.20</td>
+      <td>471,454.38</td>
       <td>0.53</td>
       <td>0.36</td>
     </tr>
@@ -15354,17 +15831,17 @@ Resolving deltas: 100% (75/75), done.
       <td>17,912,948.26</td>
       <td>89,564,741.29</td>
       <td>735,517.80</td>
+      <td>514,211.42</td>
       <td>-1,465,626,462.41</td>
-      <td>0.64</td>
       <td>...</td>
-      <td>71,454.00</td>
-      <td>76,753.00</td>
       <td>80,716.00</td>
       <td>88,274.00</td>
       <td>77,482.60</td>
       <td>387,413.00</td>
       <td>4,537.80</td>
+      <td>596.45</td>
       <td>-9,075,260.00</td>
+      <td>1,203,047.43</td>
       <td>0.98</td>
       <td>0.00</td>
     </tr>
@@ -15381,25 +15858,25 @@ Resolving deltas: 100% (75/75), done.
       <td>64,063,448.07</td>
       <td>320,317,240.35</td>
       <td>2,730,352.31</td>
+      <td>33,613.28</td>
       <td>-5,443,057,159.18</td>
-      <td>1.00</td>
       <td>...</td>
-      <td>233,972.00</td>
-      <td>243,999.00</td>
       <td>251,313.00</td>
       <td>260,878.00</td>
       <td>246,619.80</td>
       <td>1,233,099.00</td>
       <td>5,322.30</td>
+      <td>2,020.33</td>
       <td>-10,488,459.30</td>
+      <td>4,075,007.85</td>
       <td>0.84</td>
       <td>0.08</td>
     </tr>
   </tbody>
 </table>
-<p>74 rows × 22 columns</p>
+<p>74 rows × 26 columns</p>
 </div>
-      <button class="colab-df-convert" onclick="convertToInteractive('df-e33b69e9-48bb-43be-85ce-0ead16071868')"
+      <button class="colab-df-convert" onclick="convertToInteractive('df-92699f89-8cb3-4804-bb01-5797581bc347')"
               title="Convert this dataframe to an interactive table."
               style="display:none;">
         
@@ -15450,12 +15927,12 @@ Resolving deltas: 100% (75/75), done.
 
       <script>
         const buttonEl =
-          document.querySelector('#df-e33b69e9-48bb-43be-85ce-0ead16071868 button.colab-df-convert');
+          document.querySelector('#df-92699f89-8cb3-4804-bb01-5797581bc347 button.colab-df-convert');
         buttonEl.style.display =
           google.colab.kernel.accessAllowed ? 'block' : 'none';
 
         async function convertToInteractive(key) {
-          const element = document.querySelector('#df-e33b69e9-48bb-43be-85ce-0ead16071868');
+          const element = document.querySelector('#df-92699f89-8cb3-4804-bb01-5797581bc347');
           const dataTable =
             await google.colab.kernel.invokeFunction('convertToInteractive',
                                                      [key], {});
@@ -15538,7 +16015,7 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="c1"># @title Load spatial coordinates of counties</span>
@@ -15555,7 +16032,7 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[7]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="c1"># @title Load conversion df between FIPS code and county string</span>
@@ -15570,12 +16047,12 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[8]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="c1"># @title Load our ENT df of all counties, their info, and the Moran&#39;s analysis</span>
 <span class="c1"># The ent CSV file only contains the counties which are analyzable</span>
-<span class="n">df_counties_wide_orig</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;data/2022_04_10 ent initial output.csv&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;FIPS&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">})</span>
+<span class="n">df_counties_wide_orig</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;data/1_renamed/county_specific_data.csv&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;FIPS&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">})</span>
 </pre></div>
 
      </div>
@@ -15586,7 +16063,7 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[34]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">df_counties_wide_orig</span><span class="o">.</span><span class="n">columns</span>
@@ -15605,7 +16082,7 @@ Resolving deltas: 100% (75/75), done.
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[&nbsp;]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[34]:</div>
 
 
 
@@ -15652,7 +16129,7 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[13]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="c1"># @title Merge with the fips 2 county standard data set</span>
@@ -15693,7 +16170,7 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[14]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">info_simple</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;FIPS&quot;</span><span class="p">,</span> <span class="s2">&quot;CountyName&quot;</span><span class="p">,</span><span class="s2">&quot;StateAbbr&quot;</span><span class="p">,</span> <span class="s2">&quot;% ASC Billing&quot;</span><span class="p">]</span>
@@ -15726,7 +16203,7 @@ Resolving deltas: 100% (75/75), done.
 
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
 
-  <div id="df-dea6acda-193a-45d8-8840-ce847ff17259">
+  <div id="df-a539713e-ca06-4a02-851c-f6e85c358e1a">
     <div class="colab-df-container">
       <div>
 <style scoped>
@@ -15778,7 +16255,7 @@ Resolving deltas: 100% (75/75), done.
 </table>
 <p>941 rows × 4 columns</p>
 </div>
-      <button class="colab-df-convert" onclick="convertToInteractive('df-dea6acda-193a-45d8-8840-ce847ff17259')"
+      <button class="colab-df-convert" onclick="convertToInteractive('df-a539713e-ca06-4a02-851c-f6e85c358e1a')"
               title="Convert this dataframe to an interactive table."
               style="display:none;">
         
@@ -15829,12 +16306,768 @@ Resolving deltas: 100% (75/75), done.
 
       <script>
         const buttonEl =
-          document.querySelector('#df-dea6acda-193a-45d8-8840-ce847ff17259 button.colab-df-convert');
+          document.querySelector('#df-a539713e-ca06-4a02-851c-f6e85c358e1a button.colab-df-convert');
         buttonEl.style.display =
           google.colab.kernel.accessAllowed ? 'block' : 'none';
 
         async function convertToInteractive(key) {
-          const element = document.querySelector('#df-dea6acda-193a-45d8-8840-ce847ff17259');
+          const element = document.querySelector('#df-a539713e-ca06-4a02-851c-f6e85c358e1a');
+          const dataTable =
+            await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                     [key], {});
+          if (!dataTable) return;
+
+          const docLinkHtml = 'Like what you see? Visit the ' +
+            '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+            + ' to learn more about interactive tables.';
+          element.innerHTML = '';
+          dataTable['output_type'] = 'display_data';
+          await google.colab.output.renderOutput(dataTable, element);
+          const docLink = document.createElement('div');
+          docLink.innerHTML = docLinkHtml;
+          element.appendChild(docLink);
+        }
+      </script>
+    </div>
+  </div>
+  
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h2 id="Create-analysis-of-which-states-were-included">Create analysis of which states were included<a class="anchor-link" href="#Create-analysis-of-which-states-were-included">&#182;</a></h2>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[26]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-python"><pre><span></span><span class="n">counties_with_datas_counts</span> <span class="o">=</span> <span class="n">df_counties_wide</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">&quot;StateAbbr&quot;</span><span class="p">])[</span><span class="s2">&quot;StateAbbr&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">counties_with_datas_pop</span> <span class="o">=</span> <span class="n">df_counties_wide</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">&quot;StateAbbr&quot;</span><span class="p">])[</span><span class="s2">&quot;Overall Population&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">all_counties_counts</span> <span class="o">=</span> <span class="n">fips2county</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">&quot;StateAbbr&quot;</span><span class="p">])[</span><span class="s2">&quot;StateAbbr&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[27]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-python"><pre><span></span><span class="n">df_counties_by_state_and_Moran</span> <span class="o">=</span> <span class="n">df_counties_wide</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">&quot;StateAbbr&quot;</span><span class="p">,</span><span class="s2">&quot;Moran I for ASC billing fraction&quot;</span><span class="p">])[</span><span class="s2">&quot;StateAbbr&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">df_counties_by_state_and_Moran</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df_counties_by_state_and_Moran</span><span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;StateAbbr&quot;</span><span class="p">:</span><span class="s2">&quot;#&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s2">&quot;StateAbbr&quot;</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="s2">&quot;Moran I for ASC billing fraction&quot;</span><span class="p">,</span><span class="n">values</span><span class="o">=</span><span class="s2">&quot;#&quot;</span><span class="p">)</span>
+<span class="n">save_df</span><span class="p">(</span><span class="n">df_counties_by_state_and_Moran</span><span class="p">,</span> <span class="s2">&quot;df_counties_by_state_and_Moran&quot;</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[29]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-python"><pre><span></span><span class="n">df_counties_by_state</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;Included&quot;</span><span class="p">:</span><span class="n">counties_with_datas_counts</span><span class="p">,</span> <span class="s2">&quot;All Counties&quot;</span><span class="p">:</span><span class="n">all_counties_counts</span><span class="p">},</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;Int64&quot;</span><span class="p">)</span>
+<span class="n">df_counties_by_state</span><span class="p">[</span><span class="s2">&quot;Ratio&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_counties_by_state</span><span class="p">[</span><span class="s2">&quot;Included&quot;</span><span class="p">]</span><span class="o">/</span><span class="n">df_counties_by_state</span><span class="p">[</span><span class="s2">&quot;All Counties&quot;</span><span class="p">]</span>
+<span class="n">df_counties_by_state</span><span class="p">[</span><span class="s2">&quot;Included total population&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">counties_with_datas_pop</span>
+<span class="n">df_counties_by_state</span> <span class="o">=</span> <span class="n">df_counties_by_state</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;Ratio&quot;</span><span class="p">,</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">df_counties_by_state</span><span class="p">)</span>
+<span class="n">save_df</span><span class="p">(</span><span class="n">df_counties_by_state</span><span class="p">,</span> <span class="s2">&quot;df_counties_by_state&quot;</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output " data-mime-type="text/html">
+
+  <div id="df-11ce0738-3385-41bc-b7f3-314b271b5952">
+    <div class="colab-df-container">
+      <div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Included</th>
+      <th>All Counties</th>
+      <th>Ratio</th>
+      <th>Included total population</th>
+    </tr>
+    <tr>
+      <th>StateAbbr</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>DE</th>
+      <td>3</td>
+      <td>3</td>
+      <td>1.0</td>
+      <td>957247.8</td>
+    </tr>
+    <tr>
+      <th>NJ</th>
+      <td>20</td>
+      <td>21</td>
+      <td>0.952381</td>
+      <td>8815513.4</td>
+    </tr>
+    <tr>
+      <th>RI</th>
+      <td>4</td>
+      <td>5</td>
+      <td>0.8</td>
+      <td>1008467.0</td>
+    </tr>
+    <tr>
+      <th>CT</th>
+      <td>6</td>
+      <td>8</td>
+      <td>0.75</td>
+      <td>3260957.6</td>
+    </tr>
+    <tr>
+      <th>MA</th>
+      <td>10</td>
+      <td>14</td>
+      <td>0.714286</td>
+      <td>6590463.4</td>
+    </tr>
+    <tr>
+      <th>PA</th>
+      <td>47</td>
+      <td>67</td>
+      <td>0.701493</td>
+      <td>12050026.8</td>
+    </tr>
+    <tr>
+      <th>NH</th>
+      <td>7</td>
+      <td>10</td>
+      <td>0.7</td>
+      <td>1225141.0</td>
+    </tr>
+    <tr>
+      <th>NY</th>
+      <td>40</td>
+      <td>62</td>
+      <td>0.645161</td>
+      <td>18243240.6</td>
+    </tr>
+    <tr>
+      <th>CA</th>
+      <td>37</td>
+      <td>58</td>
+      <td>0.637931</td>
+      <td>38322360.6</td>
+    </tr>
+    <tr>
+      <th>FL</th>
+      <td>40</td>
+      <td>67</td>
+      <td>0.597015</td>
+      <td>20067954.2</td>
+    </tr>
+    <tr>
+      <th>ME</th>
+      <td>9</td>
+      <td>16</td>
+      <td>0.5625</td>
+      <td>1075373.2</td>
+    </tr>
+    <tr>
+      <th>MD</th>
+      <td>13</td>
+      <td>24</td>
+      <td>0.541667</td>
+      <td>4977613.4</td>
+    </tr>
+    <tr>
+      <th>AZ</th>
+      <td>8</td>
+      <td>15</td>
+      <td>0.533333</td>
+      <td>6323301.2</td>
+    </tr>
+    <tr>
+      <th>OH</th>
+      <td>44</td>
+      <td>88</td>
+      <td>0.5</td>
+      <td>9532458.4</td>
+    </tr>
+    <tr>
+      <th>SC</th>
+      <td>23</td>
+      <td>46</td>
+      <td>0.5</td>
+      <td>4110330.4</td>
+    </tr>
+    <tr>
+      <th>NC</th>
+      <td>43</td>
+      <td>100</td>
+      <td>0.43</td>
+      <td>8031528.2</td>
+    </tr>
+    <tr>
+      <th>OR</th>
+      <td>14</td>
+      <td>36</td>
+      <td>0.388889</td>
+      <td>3410117.0</td>
+    </tr>
+    <tr>
+      <th>WA</th>
+      <td>15</td>
+      <td>39</td>
+      <td>0.384615</td>
+      <td>6066682.4</td>
+    </tr>
+    <tr>
+      <th>AL</th>
+      <td>24</td>
+      <td>67</td>
+      <td>0.358209</td>
+      <td>3598340.6</td>
+    </tr>
+    <tr>
+      <th>VT</th>
+      <td>5</td>
+      <td>14</td>
+      <td>0.357143</td>
+      <td>368752.8</td>
+    </tr>
+    <tr>
+      <th>IL</th>
+      <td>35</td>
+      <td>102</td>
+      <td>0.343137</td>
+      <td>11224153.4</td>
+    </tr>
+    <tr>
+      <th>MI</th>
+      <td>28</td>
+      <td>83</td>
+      <td>0.337349</td>
+      <td>8139437.0</td>
+    </tr>
+    <tr>
+      <th>IN</th>
+      <td>31</td>
+      <td>92</td>
+      <td>0.336957</td>
+      <td>4950755.6</td>
+    </tr>
+    <tr>
+      <th>LA</th>
+      <td>21</td>
+      <td>64</td>
+      <td>0.328125</td>
+      <td>3382840.8</td>
+    </tr>
+    <tr>
+      <th>WI</th>
+      <td>22</td>
+      <td>72</td>
+      <td>0.305556</td>
+      <td>3853137.6</td>
+    </tr>
+    <tr>
+      <th>VA</th>
+      <td>40</td>
+      <td>133</td>
+      <td>0.300752</td>
+      <td>6074964.2</td>
+    </tr>
+    <tr>
+      <th>WY</th>
+      <td>6</td>
+      <td>23</td>
+      <td>0.26087</td>
+      <td>319209.4</td>
+    </tr>
+    <tr>
+      <th>GA</th>
+      <td>41</td>
+      <td>159</td>
+      <td>0.257862</td>
+      <td>7435796.4</td>
+    </tr>
+    <tr>
+      <th>MO</th>
+      <td>28</td>
+      <td>115</td>
+      <td>0.243478</td>
+      <td>4485617.8</td>
+    </tr>
+    <tr>
+      <th>UT</th>
+      <td>7</td>
+      <td>29</td>
+      <td>0.241379</td>
+      <td>2589757.2</td>
+    </tr>
+    <tr>
+      <th>WV</th>
+      <td>13</td>
+      <td>55</td>
+      <td>0.236364</td>
+      <td>965662.4</td>
+    </tr>
+    <tr>
+      <th>MS</th>
+      <td>19</td>
+      <td>82</td>
+      <td>0.231707</td>
+      <td>1736552.8</td>
+    </tr>
+    <tr>
+      <th>TN</th>
+      <td>22</td>
+      <td>95</td>
+      <td>0.231579</td>
+      <td>4560112.2</td>
+    </tr>
+    <tr>
+      <th>OK</th>
+      <td>17</td>
+      <td>77</td>
+      <td>0.220779</td>
+      <td>2571607.6</td>
+    </tr>
+    <tr>
+      <th>CO</th>
+      <td>14</td>
+      <td>64</td>
+      <td>0.21875</td>
+      <td>4652232.6</td>
+    </tr>
+    <tr>
+      <th>NM</th>
+      <td>7</td>
+      <td>33</td>
+      <td>0.212121</td>
+      <td>1288467.2</td>
+    </tr>
+    <tr>
+      <th>TX</th>
+      <td>53</td>
+      <td>254</td>
+      <td>0.208661</td>
+      <td>24127287.4</td>
+    </tr>
+    <tr>
+      <th>AR</th>
+      <td>15</td>
+      <td>75</td>
+      <td>0.2</td>
+      <td>1821981.0</td>
+    </tr>
+    <tr>
+      <th>KY</th>
+      <td>24</td>
+      <td>120</td>
+      <td>0.2</td>
+      <td>2467975.8</td>
+    </tr>
+    <tr>
+      <th>IA</th>
+      <td>18</td>
+      <td>99</td>
+      <td>0.181818</td>
+      <td>1914088.4</td>
+    </tr>
+    <tr>
+      <th>NV</th>
+      <td>3</td>
+      <td>17</td>
+      <td>0.176471</td>
+      <td>2693712.2</td>
+    </tr>
+    <tr>
+      <th>MN</th>
+      <td>15</td>
+      <td>87</td>
+      <td>0.172414</td>
+      <td>3089201.6</td>
+    </tr>
+    <tr>
+      <th>ID</th>
+      <td>7</td>
+      <td>44</td>
+      <td>0.159091</td>
+      <td>1157047.8</td>
+    </tr>
+    <tr>
+      <th>MT</th>
+      <td>8</td>
+      <td>56</td>
+      <td>0.142857</td>
+      <td>679677.6</td>
+    </tr>
+    <tr>
+      <th>SD</th>
+      <td>9</td>
+      <td>66</td>
+      <td>0.136364</td>
+      <td>513419.8</td>
+    </tr>
+    <tr>
+      <th>KS</th>
+      <td>13</td>
+      <td>105</td>
+      <td>0.12381</td>
+      <td>1962882.2</td>
+    </tr>
+    <tr>
+      <th>ND</th>
+      <td>5</td>
+      <td>53</td>
+      <td>0.09434</td>
+      <td>446012.0</td>
+    </tr>
+    <tr>
+      <th>NE</th>
+      <td>8</td>
+      <td>93</td>
+      <td>0.086022</td>
+      <td>1123839.8</td>
+    </tr>
+    <tr>
+      <th>AK</th>
+      <td>&lt;NA&gt;</td>
+      <td>29</td>
+      <td>&lt;NA&gt;</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>DC</th>
+      <td>&lt;NA&gt;</td>
+      <td>1</td>
+      <td>&lt;NA&gt;</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>HI</th>
+      <td>&lt;NA&gt;</td>
+      <td>5</td>
+      <td>&lt;NA&gt;</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+      <button class="colab-df-convert" onclick="convertToInteractive('df-11ce0738-3385-41bc-b7f3-314b271b5952')"
+              title="Convert this dataframe to an interactive table."
+              style="display:none;">
+        
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+       width="24px">
+    <path d="M0 0h24v24H0V0z" fill="none"/>
+    <path d="M18.56 5.44l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94zm-11 1L8.5 8.5l.94-2.06 2.06-.94-2.06-.94L8.5 2.5l-.94 2.06-2.06.94zm10 10l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94z"/><path d="M17.41 7.96l-1.37-1.37c-.4-.4-.92-.59-1.43-.59-.52 0-1.04.2-1.43.59L10.3 9.45l-7.72 7.72c-.78.78-.78 2.05 0 2.83L4 21.41c.39.39.9.59 1.41.59.51 0 1.02-.2 1.41-.59l7.78-7.78 2.81-2.81c.8-.78.8-2.07 0-2.86zM5.41 20L4 18.59l7.72-7.72 1.47 1.35L5.41 20z"/>
+  </svg>
+      </button>
+      
+  <style>
+    .colab-df-container {
+      display:flex;
+      flex-wrap:wrap;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+      <script>
+        const buttonEl =
+          document.querySelector('#df-11ce0738-3385-41bc-b7f3-314b271b5952 button.colab-df-convert');
+        buttonEl.style.display =
+          google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+        async function convertToInteractive(key) {
+          const element = document.querySelector('#df-11ce0738-3385-41bc-b7f3-314b271b5952');
+          const dataTable =
+            await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                     [key], {});
+          if (!dataTable) return;
+
+          const docLinkHtml = 'Like what you see? Visit the ' +
+            '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+            + ' to learn more about interactive tables.';
+          element.innerHTML = '';
+          dataTable['output_type'] = 'display_data';
+          await google.colab.output.renderOutput(dataTable, element);
+          const docLink = document.createElement('div');
+          docLink.innerHTML = docLinkHtml;
+          element.appendChild(docLink);
+        }
+      </script>
+    </div>
+  </div>
+  
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[30]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-python"><pre><span></span><span class="n">df_counties_wide_main</span><span class="p">[[</span><span class="s2">&quot;County&quot;</span><span class="p">,</span><span class="s2">&quot;StateAbbr&quot;</span><span class="p">,</span><span class="s2">&quot;Moran I for ASC billing fraction&quot;</span><span class="p">]]</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[30]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+
+  <div id="df-b0811066-7abd-4f77-baa2-67758e82ddf7">
+    <div class="colab-df-container">
+      <div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>County</th>
+      <th>StateAbbr</th>
+      <th>Moran I for ASC billing fraction</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Chambers</td>
+      <td>AL</td>
+      <td>Non Significant</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Colbert</td>
+      <td>AL</td>
+      <td>Non Significant</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Dale</td>
+      <td>AL</td>
+      <td>Non Significant</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Limestone</td>
+      <td>AL</td>
+      <td>Non Significant</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>White</td>
+      <td>AR</td>
+      <td>Non Significant</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>936</th>
+      <td>Franklin</td>
+      <td>KY</td>
+      <td>Non Significant</td>
+    </tr>
+    <tr>
+      <th>937</th>
+      <td>Laramie</td>
+      <td>WY</td>
+      <td>Non Significant</td>
+    </tr>
+    <tr>
+      <th>938</th>
+      <td>Lewis</td>
+      <td>WV</td>
+      <td>Low-Low</td>
+    </tr>
+    <tr>
+      <th>939</th>
+      <td>Windsor</td>
+      <td>VT</td>
+      <td>Low-Low</td>
+    </tr>
+    <tr>
+      <th>940</th>
+      <td>Chesterfield</td>
+      <td>VA</td>
+      <td>Non Significant</td>
+    </tr>
+  </tbody>
+</table>
+<p>941 rows × 3 columns</p>
+</div>
+      <button class="colab-df-convert" onclick="convertToInteractive('df-b0811066-7abd-4f77-baa2-67758e82ddf7')"
+              title="Convert this dataframe to an interactive table."
+              style="display:none;">
+        
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+       width="24px">
+    <path d="M0 0h24v24H0V0z" fill="none"/>
+    <path d="M18.56 5.44l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94zm-11 1L8.5 8.5l.94-2.06 2.06-.94-2.06-.94L8.5 2.5l-.94 2.06-2.06.94zm10 10l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94z"/><path d="M17.41 7.96l-1.37-1.37c-.4-.4-.92-.59-1.43-.59-.52 0-1.04.2-1.43.59L10.3 9.45l-7.72 7.72c-.78.78-.78 2.05 0 2.83L4 21.41c.39.39.9.59 1.41.59.51 0 1.02-.2 1.41-.59l7.78-7.78 2.81-2.81c.8-.78.8-2.07 0-2.86zM5.41 20L4 18.59l7.72-7.72 1.47 1.35L5.41 20z"/>
+  </svg>
+      </button>
+      
+  <style>
+    .colab-df-container {
+      display:flex;
+      flex-wrap:wrap;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+      <script>
+        const buttonEl =
+          document.querySelector('#df-b0811066-7abd-4f77-baa2-67758e82ddf7 button.colab-df-convert');
+        buttonEl.style.display =
+          google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+        async function convertToInteractive(key) {
+          const element = document.querySelector('#df-b0811066-7abd-4f77-baa2-67758e82ddf7');
           const dataTable =
             await google.colab.kernel.invokeFunction('convertToInteractive',
                                                      [key], {});
@@ -15870,7 +17103,7 @@ Resolving deltas: 100% (75/75), done.
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[28]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-python"><pre><span></span><span class="n">col_categories</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Total Number of Services:&quot;</span><span class="p">,</span> <span class="s2">&quot;Total Medicare Payment Amount:&quot;</span><span class="p">,</span> <span class="s2">&quot;% ASC Procedures:&quot;</span><span class="p">,</span> <span class="s2">&quot;% ASC Billing:&quot;</span><span class="p">]</span>

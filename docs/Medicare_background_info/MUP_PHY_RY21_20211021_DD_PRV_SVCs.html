@@ -1,0 +1,231 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><HTML>
+<HEAD>
+<TITLE></TITLE>
+</HEAD>
+<BODY>
+<A name=1></a>Medicare Physician &amp; Other Practitioners - by Provider and Service Data Dictionary<br>
+Term Name<br>
+Variable Name<br>
+Definition<br>
+National Provider Identifier (NPI) for the rendering provider<br>
+National Provider Identifier<br>
+Rndrng_NPI<br>
+on the claim. The provider NPI is the<br>
+numeric identifier registered in NPPES.<br>
+When the provider is registered in NPPES as an individual<br>
+Last Name/Organization Name of the<br>
+(entity type code='I'), this is the provider's last name. When<br>
+Provider<br>
+Rndrng_Prvdr_Last_Org_Name<br>
+the provider is registered as an organization (entity type<br>
+code = `O'), this is the organization name.<br>
+When the provider is registered in NPPES as an individual<br>
+First Name of the Provider<br>
+Rndrng_Prvdr_First_Name<br>
+(entity type code='I'), this is the provider's first name. When<br>
+the provider is registered as an organization (entity type<br>
+code = `O'), this wil be blank.<br>
+When the provider is registered in NPPES as an individual<br>
+Middle Initial of the Provider<br>
+Rndrng_Prvdr_MI<br>
+(entity type code='I'), this is the provider's middle initial.<br>
+When the provider is registered as an organization (entity<br>
+type code = `O'), this wil be blank.<br>
+When the provider is registered in NPPES as an individual<br>
+Credentials of the Provider<br>
+Rndrng_Prvdr_Crdntls<br>
+(entity type code='I'), these are the provider's credentials.<br>
+When the provider is registered as an organization (entity<br>
+type code = `O'), this wil be blank.<br>
+When the provider is registered in NPPES as an individual<br>
+Gender of the Provider<br>
+Rndrng_Prvdr_Gndr<br>
+(entity type code='I'), this is the provider's gender. When<br>
+the provider is registered as an organization (entity type<br>
+code = `O'), this wil be blank.<br>
+Type of entity reported in NPPES. An entity code of `I'<br>
+Entity Type of the Provider<br>
+Rndrng_Prvdr_Ent_Cd<br>
+identifies providers registered as individuals and an entity<br>
+type code of `O' identifies providers registered as<br>
+organizations.<br>
+Street Address 1 of the Provider<br>
+Rndrng_Prvdr_St1<br>
+The first line of the provider's street address, as reported in<br>
+NPPES.<br>
+Street Address 2 of the Provider<br>
+Rndrng_Prvdr_St2<br>
+The second line of the provider's street address, as reported<br>
+in NPPES.<br>
+City of the Provider<br>
+Rndrng_Prvdr_City<br>
+The city where the provider is located, as reported in<br>
+NPPES.<br>
+The state where the provider is located, as reported in<br>
+State Abbreviation of the Provider<br>
+Rndrng_Prvdr_State_Abrvtn<br>
+NPPES. The fifty U.S. states and the District of Columbia are<br>
+reported by the state postal abbreviation. The fol owing<br>
+values are used for al other areas:<br>
+State FIPS Code of the Provider<br>
+Rndrng_Prvdr_State_FIPS<br>
+FIPS code for rendering provider's state.<br>
+Zip Code of the Provider<br>
+Rndrng_Prvdr_Zip5<br>
+The provider's zip code, as reported in NPPES.<br>
+Rural-Urban Commuting Area Codes (RUCAs), are a Census<br>
+tract-based classification scheme that utilizes the standard<br>
+Bureau of Census Urbanized Area and Urban Cluster<br>
+definitions in combination with work commuting<br>
+RUCA Code of the Provider<br>
+Rndrng_Prvdr_RUCA<br>
+information to characterize all of the nation's Census tracts<br>
+regarding their rural and urban status and relationships. The<br>
+Referring Provider ZIP code was cross walked to the United<br>
+States Department of Agriculture (USDA) 2010 Rural-Urban<br>
+Commuting Area Codes.<br>
+RUCA Description<br>
+Rndrng_Prvdr_RUCA_Desc<br>
+Description of Rural-Urban Commuting Area (RUCA) Code<br>
+<hr>
+<A name=2></a>Medicare Physician &amp; Other Practitioners - by Provider and Service Data Dictionary<br>
+Term Name<br>
+Variable Name<br>
+Definition<br>
+The country where the provider is located, as reported in<br>
+Country Code of the Provider<br>
+Rndrng_Prvdr_Cntry<br>
+NPPES. The country code will be `US' for any state or U.S.<br>
+possession. For foreign countries (i.e., state values of `ZZ'),<br>
+the provider country values include the fol owing:<br>
+Derived from the provider specialty code reported on the<br>
+Provider Type of the Provider<br>
+Rndrng_Prvdr_Type<br>
+claim. For providers that reported more than one specialty<br>
+code on their claims, this is the specialty code associated<br>
+with the largest number of services.<br>
+Identifies whether the provider participates in Medicare<br>
+and/or accepts assignment of Medicare al owed amounts.<br>
+The value wil be `Y' for any provider that had at least one<br>
+claim identifying the provider as participating in Medicare<br>
+Medicare Participation Indicator<br>
+Rndrng_Prvdr_Mdcr_Prtcptg_Ind<br>
+or accepting assignment of Medicare al owed amounts<br>
+within HCPCS code and place of service. A non-participating<br>
+provider may elect to accept Medicare allowed amounts for<br>
+some services and not accept Medicare al owed amounts<br>
+for other services.<br>
+HCPCS code used to identify the specific medical service<br>
+furnished by the provider. HCPCS codes include two levels.<br>
+Level I codes are the Current Procedural Terminology (CPT)<br>
+codes that are maintained by the American Medical<br>
+Association and Level I codes are created by CMS to<br>
+identify products, supplies and services not covered by the<br>
+HCPCS Code<br>
+HCPCS_Cd<br>
+CPT codes (such as ambulance services). CPT codes,<br>
+descriptions and other data only are copyright 2016<br>
+American Medical Association. Al rights reserved. CPT is a<br>
+registered trademark of the American Medical Association<br>
+(AMA). Please review the complete CMS AMA CPT License<br>
+agreement which is presented to users when accessing the<br>
+data. For additional information on HCPCS codes, visit the<br>
+HCPCS general information page.<br>
+Description of the HCPCS code for the specific medical<br>
+service furnished by the provider. HCPCS descriptions<br>
+associated with CPT codes are consumer friendly<br>
+descriptions provided by the AMA. CPT Consumer Friendly<br>
+Descriptors are lay synonyms for CPT descriptors that are<br>
+intended to help healthcare consumers who are not medical<br>
+professionals understand clinical procedures on bil s and<br>
+HCPCS Description<br>
+HCPCS_Desc<br>
+patient portals. CPT Consumer Friendly Descriptors should<br>
+not be used for clinical coding or documentation. Al other<br>
+descriptions are CMS Level I descriptions provided in long<br>
+form. Due to variable length restrictions, the CMS Level I<br>
+descriptions have been truncated to 256 bytes. As a result,<br>
+the same HCPCS description can be associated with more<br>
+than one HCPCS code. For complete CMS Level I<br>
+descriptions, please visit the HCPCS Release Code Sets page.<br>
+<hr>
+<A name=3></a>Medicare Physician &amp; Other Practitioners - by Provider and Service Data Dictionary<br>
+Term Name<br>
+Variable Name<br>
+Definition<br>
+Identifies whether the HCPCS code for the specific service<br>
+HCPCS Drug Indicator<br>
+HCPCS_Drug_Ind<br>
+furnished by the provider is a HCPCS listed on the Medicare<br>
+Part B Drug Average Sales Price (ASP) File. Please visit the<br>
+ASP drug pricing page for additional information.<br>
+Identifies whether the place of service submitted on the<br>
+claims is a facility (value of `F') or non-facility (value of `O').<br>
+Place of Service<br>
+Place_Of_Srvc<br>
+Non-facility is general y an office setting; however other<br>
+entities are included in non-facility. The fol owing values are<br>
+entities included in facility and non-facility:<br>
+Number of Medicare Beneficiaries<br>
+Tot_Benes<br>
+Number of distinct Medicare beneficiaries receiving the<br>
+service for each Rndrng_NPI, HCPCS_Cd, and Place_Of_Srvc.<br>
+Number of Services<br>
+Tot_Srvcs<br>
+Number of services provided; note that the metrics used to<br>
+count the number provided can vary from service to service.<br>
+Number of distinct Medicare beneficiary/per day services.<br>
+Since a given beneficiary may receive multiple services of<br>
+Number of Distinct Medicare<br>
+the same type (e.g., single vs. multiple cardiac stents) on a<br>
+Beneficiary/Per Day Services<br>
+Tot_Bene_Day_Srvcs<br>
+single day, this metric removes double-counting from the<br>
+line service count to identify whether a unique service<br>
+occurred.<br>
+Average Submitted Charge Amount<br>
+Avg_Sbmtd_Chrg<br>
+Average of the charges that the provider submitted for the<br>
+service.<br>
+Average of the Medicare al owed amount for the service;<br>
+this figure is the sum of the amount Medicare pays, the<br>
+Average Medicare Al owed Amount Avg_Mdcr_Alowd_Amt<br>
+deductible and coinsurance amounts that the beneficiary is<br>
+responsible for paying, and any amounts that a third party is<br>
+responsible for paying.<br>
+Average amount that Medicare paid after deductible and<br>
+coinsurance amounts have been deducted for the line item<br>
+service. Note: In general, Medicare FFS claims with dates-of-<br>
+Average Medicare Payment Amount Avg_Mdcr_Pymt_Amt<br>
+service or dates-of-discharge on or after April 1, 2013,<br>
+incurred a 2 percent reduction in Medicare payment. This is<br>
+in response to mandatory across-the-board reductions in<br>
+Federal spending, also known as sequestration.<br>
+<hr>
+<A name=4></a>Medicare Physician &amp; Other Practitioners - by Provider and Service Data Dictionary<br>
+Term Name<br>
+Variable Name<br>
+Definition<br>
+Average amount that Medicare paid after beneficiary<br>
+deductible and coinsurance amounts have been deducted<br>
+for the line item service and after standardization of the<br>
+Medicare payment has been applied. Standardization<br>
+removes geographic differences in payment rates for<br>
+individual services, such as those that account for local<br>
+Average Medicare Standardized<br>
+wages or input prices and makes Medicare payments across<br>
+Payment Amount<br>
+Avg_Mdcr_Stdzd_Amt<br>
+geographic areas comparable, so that differences reflect<br>
+variation in factors such as physicians' practice patterns and<br>
+beneficiaries' ability and wil ingness to obtain care. Note:<br>
+This variable is available starting with the calendar year<br>
+2014 data. Please refer to the "Additional Information"<br>
+section of this document for more details on the<br>
+standardization of Medicare payments.<br>
+<hr>
+<A name="outline"></a><h1>Document Outline</h1>
+<ul><li>þÿ
+</ul><hr>
+</BODY>
+</HTML>

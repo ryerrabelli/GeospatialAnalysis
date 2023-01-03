@@ -18,14 +18,17 @@ import sklearn.linear_model
 import pandas as pd
 idx = pd.IndexSlice
 import plotly.express as px
+import collections
+
 
 import warnings
 import requests
 import urllib.request
 import json
+import copy   # to perform dict deep copy
 
 
-# In[2]:
+# In[3]:
 
 
 #@title ## Option 1) Mount google drive and import my code
@@ -84,9 +87,12 @@ def calc_regression(y, x):
         "Mean": np.mean(y, axis=0),
         "Sum": np.sum(y, axis=0),
         "Slope": regress.slope, 
+        "SlopeSE": regress.stderr,
         "Intercept": regress.intercept, 
+        "InterceptSE": regress.intercept_stderr,
         "R": regress.rvalue, 
         "p": regress.pvalue, 
+         
         })
 
 
@@ -141,7 +147,7 @@ def save_figure(fig, file_name:str, animated=False):
 
 # # CMS API access
 
-# In[3]:
+# In[33]:
 
 
 
@@ -189,35 +195,102 @@ Avg_Mdcr_Pymt_Amt	NUMERIC
 Avg_Mdcr_Stdzd_Amt	NUMERIC"""   
 
 
-# In[19]:
+# In[32]:
+
+
+
+def access_CMS_data(years, query, print_checkpoints=True, max_length=100000, return_pandas=True):
+    records = {}
+    if years is None:
+        years = CMS_dataset_uuids.keys()
+    for year in years:
+        uuid = CMS_dataset_uuids[year]
+        url_data = f"https://data.cms.gov/data-api/v1/dataset/{uuid}/data"
+        url_stats = f"{url_data}/stats"
+        query_stats = copy.deepcopy(query)
+        stats_response = requests.get(url_stats, params=query_stats)
+        if stats_response.status_code == 200:
+            stats_response_json = stats_response.json()
+            found_rows_ct = stats_response_json["found_rows"] 
+            total_rows_ct = stats_response_json["total_rows"]
+            if print_checkpoints: print(stats_response_json)
+
+            query_offset = 0
+            query_size = query["size"]
+            records[year] = []
+            while query_offset < found_rows_ct:
+                query_data = copy.deepcopy(query)
+                data_response = requests.get(url_data, params=query_data)
+                if data_response.status_code == 200:
+                    data_response_json = data_response.json()
+                    # append lists
+                    if print_checkpoints and query_offset>0: print("query_offset", query_offset)
+                    records[year] = records[year] + data_response_json
+                query_offset += query_size
+    
+    if return_pandas:
+        import pandas as pd
+        return pd.concat([pd.DataFrame.from_dict(year_of_records) for year_of_records in records.values()], keys=records.keys())
+    else:
+        # return as dict of list
+        return records
+
+
+# In[67]:
+
+
+a=collections.defaultdict()
+
+
+# In[69]:
+
+
+a
+
+
+# In[35]:
 
 
 uuid = CMS_dataset_uuids[2019]
 query = {
     "column":"HCPCS_Cd,HCPCS_Desc,Tot_Benes", 
     #"group_by":"HCPCS_Cd",
-    "offset":10000, "size":10, "keyword":"anesthesia"
+    "offset":0, "size":10, "keyword":"30140"
     }
 #url = f"https://data.cms.gov/provider-data/api/1/metastore/schemas/dataset/{uuid}/data?column=Rndrng_Prvdr_State_FIPS&offset=0&size=10"
-url = f"https://data.cms.gov/data-api/v1/dataset/{uuid}/data/stats"
+url = f"https://data.cms.gov/data-api/v1/dataset/{uuid}/data"
 #url = f"https://data.cms.gov/data-api/v1/dataset/{uuid}/data?column=Rndrng_Prvdr_State_FIPS&offset=0&size=10"
 response = requests.get(url, params=query)
 
 if response.status_code == 200:
     print(response.json())
-    #display(pd.DataFrame.from_dict(response.json()))
+    display(pd.DataFrame.from_dict(response.json()))
 
 
-# In[ ]:
+# In[16]:
+
+
+query = {
+    #     "column":"HCPCS_Cd,HCPCS_Desc,Tot_Benes", 
+    # 
+    "column":"HCPCS_Cd,HCPCS_Desc,HCPCS_Drug_Ind,Place_Of_Srvc,Tot_Benes,Tot_Srvcs,Tot_Bene_Day_Srvcs,Avg_Sbmtd_Chrg,Avg_Mdcr_Alowd_Amt,Avg_Mdcr_Pymt_Amt,Avg_Mdcr_Stdzd_Am", 
+    #"group_by":"HCPCS_Cd",
+    "offset":0, "size":200, "keyword":"60240"
+    }
+records = access_CMS_data(None, query)
+
+
+# In[18]:
+
+
+display(records)
+
+
+# In[97]:
 
 
 
-
-
-# In[36]:
-
-
-
+save_df(records, "records_for_HCPCS=60240")
 
 
 # # Procedures analysis
@@ -227,7 +300,7 @@ if response.status_code == 200:
 
 # The slope given in the csv file is actually the inverse slope. We need to either recalculate it or invert it. I will just recalculate all the regression values.
 
-# In[51]:
+# In[5]:
 
 
 df_procedures_orig = pd.read_csv("data/1_renamed/procedure_specific_data.csv",
@@ -243,7 +316,7 @@ df_procedures_orig = pd.read_csv("data/1_renamed/procedure_specific_data.csv",
 
 # ## Clean df and recalculate regression
 
-# In[54]:
+# In[6]:
 
 
 df_procedures_clean = df_procedures_orig.set_index(["Specialty","Group","HCPCS Code", "HCPCS Description"])
@@ -262,13 +335,9 @@ df_procedures_clean = df_procedures_clean[sorted(df_procedures_clean)]  # rearra
 
 col_categories = df_procedures_clean.columns.levels[0]  #["Total Number of Services", "Total Medicare Payment Amount"]
 
-
-# In[55]:
-
-
+# Make aggregates across the specialties and the groups
 specialties = df_procedures_clean.index.unique(level="Specialty")
 all_groups = df_procedures_clean.index.unique(level="Group")
-
 df_procedures_clean.loc[("Total",None,"Total","Total")] = df_procedures_clean.sum()
 for specialty in specialties:
     df_procedures_clean.loc[(specialty,None,"Total","Total")]=df_procedures_clean.loc[specialty].sum()
@@ -280,7 +349,13 @@ for specialty in specialties:
 #df_procedures_clean = df_procedures_clean.sort_index()
 
 
-# In[56]:
+# In[104]:
+
+
+
+
+
+# In[7]:
 
 
 # Calculate regression and sum and mean from individual year later
@@ -299,7 +374,7 @@ df_procedures_recalc = df_procedures_recalc.sort_values(by=("Total Medicare Paym
 df_procedures_recalc = df_procedures_recalc.sort_index()
 
 
-# In[57]:
+# In[8]:
 
 
 with pd.option_context('display.float_format', '{:,.2f}'.format):
@@ -323,7 +398,7 @@ df_procedures_clean2.index.is_monotonic_increasing
 
 # ## Load data
 
-# In[ ]:
+# In[6]:
 
 
 # @title Load spatial coordinates of counties
@@ -332,28 +407,28 @@ with urllib.request.urlopen('https://raw.githubusercontent.com/plotly/datasets/m
     counties = json.load(response)
 
 
-# In[ ]:
+# In[7]:
 
 
 # @title Load conversion df between FIPS code and county string
 fips2county = pd.read_csv("data/fips2county.tsv", sep="\t", comment='#', dtype=str)
 
 
-# In[ ]:
+# In[8]:
 
 
 # @title Load our ENT df of all counties, their info, and the Moran's analysis
 # The ent CSV file only contains the counties which are analyzable
-df_counties_wide_orig = pd.read_csv("data/2022_04_10 ent initial output.csv", dtype={"FIPS": str})
+df_counties_wide_orig = pd.read_csv("data/1_renamed/county_specific_data.csv", dtype={"FIPS": str})
 
 
-# In[ ]:
+# In[34]:
 
 
 df_counties_wide_orig.columns
 
 
-# In[ ]:
+# In[13]:
 
 
 # @title Merge with the fips 2 county standard data set
@@ -386,7 +461,7 @@ cols_renamed={
 df_counties_wide = df_counties_wide.rename(columns=cols_renamed)
 
 
-# In[ ]:
+# In[14]:
 
 
 info_simple = ["FIPS", "CountyName","StateAbbr", "% ASC Billing"]
@@ -400,9 +475,44 @@ with pd.option_context('display.max_rows', 3, 'display.max_columns', None):
     display(df_counties_wide_simple)
 
 
+# ## Create analysis of which states were included
+
+# In[26]:
+
+
+counties_with_datas_counts = df_counties_wide.groupby(["StateAbbr"])["StateAbbr"].count()
+counties_with_datas_pop = df_counties_wide.groupby(["StateAbbr"])["Overall Population"].sum()
+all_counties_counts = fips2county.groupby(["StateAbbr"])["StateAbbr"].count()
+
+
+# In[27]:
+
+
+df_counties_by_state_and_Moran = df_counties_wide.groupby(["StateAbbr","Moran I for ASC billing fraction"])["StateAbbr"].count()
+df_counties_by_state_and_Moran = pd.DataFrame(df_counties_by_state_and_Moran).rename(columns={"StateAbbr":"#"}).reset_index().pivot(index="StateAbbr",columns="Moran I for ASC billing fraction",values="#")
+save_df(df_counties_by_state_and_Moran, "df_counties_by_state_and_Moran")
+
+
+# In[29]:
+
+
+df_counties_by_state = pd.DataFrame({"Included":counties_with_datas_counts, "All Counties":all_counties_counts}, dtype="Int64")
+df_counties_by_state["Ratio"] = df_counties_by_state["Included"]/df_counties_by_state["All Counties"]
+df_counties_by_state["Included total population"] = counties_with_datas_pop
+df_counties_by_state = df_counties_by_state.sort_values(by="Ratio",ascending=False)
+display(df_counties_by_state)
+save_df(df_counties_by_state, "df_counties_by_state")
+
+
+# In[30]:
+
+
+df_counties_wide_main[["County","StateAbbr","Moran I for ASC billing fraction"]]
+
+
 # ## Create long df from wide df- i.e. separate out the year columns into different rows
 
-# In[ ]:
+# In[28]:
 
 
 col_categories = ["Total Number of Services:", "Total Medicare Payment Amount:", "% ASC Procedures:", "% ASC Billing:"]
