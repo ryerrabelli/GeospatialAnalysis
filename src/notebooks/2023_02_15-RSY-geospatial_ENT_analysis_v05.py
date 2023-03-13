@@ -5,7 +5,7 @@
 
 # # Set up
 
-# In[1]:
+# In[6]:
 
 
 #@title ## Base imports
@@ -17,12 +17,14 @@ import sklearn
 import sklearn.linear_model
 import pandas as pd
 idx = pd.IndexSlice
+import IPython
 import plotly
 import plotly.express as px
 import plotly.graph_objects as go
 import textwrap
 import collections
 
+import IPython.display
 
 import warnings
 import requests
@@ -31,7 +33,7 @@ import json
 import copy   # to perform dict deep copy
 
 
-# In[98]:
+# In[2]:
 
 
 #@title ## Option 1) Mount google drive and import my code
@@ -74,7 +76,7 @@ print(sys.path)
 
 # # Helper functions
 
-# In[79]:
+# In[3]:
 
 
 colab_ip = get_ipython().run_line_magic('system', 'hostname -I   # uses colab magic to get list from bash')
@@ -82,7 +84,6 @@ colab_ip = colab_ip[0].strip()   # returns "172.28.0.12"
 # Get most precent port name with !sudo lsof -i -P -n | grep LISTEN
 colab_port = 9000                # could use 6000, 8080, or 9000
 
-import requests
 notebook_filename = filename = requests.get(f"http://{colab_ip}:{colab_port}/api/sessions").json()[0]["name"]
 
 # Avoids scroll-in-the-scroll in the entire Notebook
@@ -290,7 +291,7 @@ save_df(records, "records_for_HCPCS=60240")
 
 # The slope given in the csv file is actually the inverse slope. We need to either recalculate it or invert it. I will just recalculate all the regression values.
 
-# In[149]:
+# In[16]:
 
 
 df_procedures_orig = pd.read_csv("data/1_renamed/procedure_specific_data.csv",
@@ -305,25 +306,20 @@ df_procedures_orig = pd.read_csv("data/1_renamed/procedure_specific_data.csv",
                                     "% ASC Procedures": np.float64,
                                     "% ASC Billing": np.float64,
                                     })  # gets per healthcare code info
+print(f"df_procedures_orig.shape = {df_procedures_orig.shape}")
+df_procedures_orig.head(1)
 
 
 # ## Clean df and recalculate regression
 
-# In[134]:
-
-
-df_procedures_clean.columns.levels[2]
-#df_procedures_clean['Total Medicare Payment'].columns.levels
-
-
-# In[175]:
+# In[26]:
 
 
 df_procedures_clean = df_procedures_orig.set_index(["Specialty","Group","HCPCS Code", "HCPCS Description"])
 
 # Remove the "amount" word 
 df_procedures_clean.columns = [col.replace("Total Medicare Payment Amount","Total Medicare Payment") for col in df_procedures_clean.columns]
-# Make % words match the rest of the df
+# Make % column names match the rest of the df column names
 df_procedures_clean.columns = [col.replace("ASC Billing","ASC Payment") for col in df_procedures_clean.columns]
 df_procedures_clean.columns = [col.replace("ASC Procedures","ASC Services") for col in df_procedures_clean.columns]
 
@@ -341,7 +337,7 @@ df_procedures_clean.columns = [ (col.replace("% ASC ","ASC: ") + ": %" if "% ASC
 df_procedures_clean.columns = pd.MultiIndex.from_tuples([tuple(col.split(": ")) if ":" in col else (col,"","") for col in df_procedures_clean.columns], names=["Category","Stat","Year"])
 df_procedures_clean = df_procedures_clean[sorted(df_procedures_clean)]  # rearrange cols alphabetically
 
-col_categories = df_procedures_clean.columns.levels[0]  #['ASC %', "Total Number of Services", "Total Medicare Payment Amount"]
+col_categories = df_procedures_clean.columns.levels[0]  #["ASC", "Total Number of Services", "Total Medicare Payment"]
 
 # Make aggregates across the specialties and the groups
 """specialties = df_procedures_clean.index.unique(level="Specialty")
@@ -357,7 +353,13 @@ for specialty in specialties:
 #df_procedures_clean = df_procedures_clean.sort_index()
 
 
-# In[173]:
+# In[24]:
+
+
+df_procedures_clean.head()
+
+
+# In[ ]:
 
 
 df_procedures_clean2 = df_procedures_clean.sort_index(level=[0,1,2,3])
@@ -368,13 +370,40 @@ df_procedures_clean2.index.is_monotonic_increasing
 #df_procedures_clean.loc[(specialty,"B","a","a"):tuple()]
 
 
-# In[176]:
+# In[66]:
+
+
+col_category.split(" ")[-1]
+
+
+# In[84]:
 
 
 # Calculate regression and sum and mean from individual year later
 df_procedures_recalc = df_procedures_clean.copy()
 
-# Make aggregates across the specialties and the groups
+
+# Convert columns with percentages (i.e. ASC %) into absolute numbers so can aggregate properly
+for col_category in col_categories:
+    if col_category in df_procedures_recalc and "Annual" in df_procedures_recalc[col_category].columns:
+        mean_df = df_procedures_recalc[(col_category,"Annual")].mean(axis=1)
+        percent_col_name = col_category.split(" ")[-1]
+        mean_ASC_df = mean_df * df_procedures_recalc[("ASC",percent_col_name,"%")]
+        mean_HOPD_df = mean_df * (1-df_procedures_recalc[("ASC",percent_col_name,"%")])
+        df_procedures_recalc[(col_category,"ASC","Mean")]=mean_ASC_df
+        df_procedures_recalc[(col_category,"HOPD","Mean")]=mean_HOPD_df
+        #df_procedures_recalc[(col_category,"","Slope")]=df_procedures_recalc[(col_category,"Annual")].apply(calc_regression,axis=1)
+
+# Drop columns with percentages for now since those can't be easily aggregated (i.e. you can't just average them directly, you have to weight them)
+df_procedures_recalc = df_procedures_recalc.drop(columns=[
+    col for col in df_procedures_clean.columns  if "%" in col
+])
+
+
+# In[94]:
+
+
+# Make aggregates (totals) across the specialties and the groups
 specialties = df_procedures_recalc.index.unique(level="Specialty")
 all_groups = df_procedures_recalc.index.unique(level="Group")
 df_procedures_recalc.loc[("Total",None,"Total","Total")] = df_procedures_recalc.sum()
@@ -385,40 +414,37 @@ for specialty in specialties:
         if df_procedures_recalc.loc[(specialty,group)].shape[0] > 1:
             df_procedures_recalc.loc[(specialty,group,"Total","Total")]=df_procedures_recalc.loc[(specialty,group)].sum()
 
+# Calculate overall statistics (mean, SE, p value, R, etc)
 for col_category in col_categories:
-    if "Annual" in df_procedures_recalc[col_category].columns:
+    if col_category in df_procedures_recalc and "Annual" in df_procedures_recalc[col_category].columns:
         new_df = df_procedures_recalc[(col_category,"Annual")].apply(calc_regression,axis=1, result_type="expand", args=(years,) )
         df_procedures_recalc[[(col_category,"Overall",new_col) for new_col in new_df.columns ]]=new_df
         #df_procedures_recalc[(col_category,"","Slope")]=df_procedures_recalc[(col_category,"Annual")].apply(calc_regression,axis=1)
 
+# Recalculate ASC %. This should match the % before analysis for the individual procedures, but now has the correct info for aggreageted procedures
 for col_category in col_categories:
-    if "Annual" not in df_procedures_recalc[col_category].columns:
-        df_procedures_recalc[(col_category,"Payment","Mean")] =             df_procedures_recalc[(col_category,"Payment","%")] * df_procedures_recalc[("Total Medicare Payment","Overall","Mean")]
-        df_procedures_recalc[(col_category,"Services","Mean")] =             df_procedures_recalc[(col_category,"Services","%")] * df_procedures_recalc[("Total Number of Services","Overall","Mean")]
-        df_procedures_recalc[(col_category,"PaymentPerService","")] = df_procedures_recalc[(col_category,"Payment","Mean")] / df_procedures_recalc[(col_category,"Services","Mean")]
-        df_procedures_recalc[(col_category,"Ratio","")] = df_procedures_recalc[(col_category,"Payment","%")] / df_procedures_recalc[(col_category,"Services","%")]
+    if col_category in df_procedures_recalc and "Annual" in df_procedures_recalc[col_category].columns:
+        df_procedures_recalc[(col_category,"ASC","%")] =             df_procedures_recalc[(col_category,"ASC","Mean")] / df_procedures_recalc[(col_category,"Overall","Mean")]
+        df_procedures_recalc[(col_category,"HOPD","%")] =             df_procedures_recalc[(col_category,"HOPD","Mean")] / df_procedures_recalc[(col_category,"Overall","Mean")]
 
-# rearrange cols alphabetically, but only by the first two elements of the each column's name tuple
+
+# Rearrange cols alphabetically, but only by the first two elements of the each column's name tuple
 # This allows the order of the newly added columns to remain relative to themselves, but be rearranged relative to the other columns
-df_procedures_recalc = df_procedures_recalc[sorted(df_procedures_recalc.columns, key=(lambda x: x[0:2]))]  
+#df_procedures_recalc = df_procedures_recalc[sorted(df_procedures_recalc.columns, key=(lambda x: x[0:2]))]  
+# Alternatively, rearrange by first level alphabetically, then length of second level 
+df_procedures_recalc = df_procedures_recalc[sorted(df_procedures_recalc.columns, key=(lambda x: (x[0],len(x[1])) ) )]  
 
 #df_procedures = df_procedures.sort_values(by=("Total Number of Services","","Sum"), ascending=False)  # sort rows by volume 
 df_procedures_recalc = df_procedures_recalc.sort_values(by=("Total Medicare Payment","Overall","Mean"), ascending=False)  # sort rows by volume 
 df_procedures_recalc = df_procedures_recalc.sort_index()
 
 
-# In[177]:
-
-
-df_procedures_recalc
-
-
 # ## Save recalculated procedures
 
-# In[ ]:
+# In[96]:
 
 
-with pd.option_context('display.float_format', '{:,.2f}'.format):
+with pd.option_context("display.float_format", "{:,.2f}".format):
     display(df_procedures_recalc)
 
 save_df(df_procedures_recalc, "df_procedures_recalc")
@@ -434,7 +460,7 @@ save_df(df_procedures_recalc, "df_procedures_recalc")
 
 # ## Plot procedures in response to Reviewer 1's response (in round #2)
 
-# In[ ]:
+# In[338]:
 
 
 def customize_bar_chart(fig: plotly.graph_objs.Figure):
@@ -445,51 +471,39 @@ def customize_bar_chart(fig: plotly.graph_objs.Figure):
                 size=16,
                 color="black",
             ),
-        xaxis=dict(
-            zeroline=True,
-            showgrid=True,
-            mirror="ticks",
-            gridcolor="#DDD",
-            showspikes=True, spikemode="across", spikethickness=2, spikedash="solid"
-        ),
-        yaxis=dict(
-            zeroline=True,
-            showgrid=True,
-            mirror="ticks",
-            gridcolor="#DDD",
-            showspikes=True, spikemode="across", spikethickness=2, spikedash="solid"
-        ),
-
     )
+    # Below statements can be done in fig.update_layout(), but doing for_each allows it to work for each subplot when there are s
+    fig.for_each_xaxis(lambda axis: axis.update(dict(
+        zeroline=True,
+        showgrid=True,
+        mirror="ticks",
+        gridcolor="#DDD",
+        showspikes=True, spikemode="across", spikethickness=2, spikedash="solid"
+    )))
+    fig.for_each_yaxis(lambda axis: axis.update(dict(
+        zeroline=True,
+        showgrid=True,
+        mirror="ticks",
+        gridcolor="#DDD",
+        showspikes=True, spikemode="across", spikethickness=2, spikedash="solid"
+    )))
 
 var_labels = {
     "Total Medicare Payment-Overall-Mean": "Total Medicare Payment - 5yr mean ($/yr)",
-    **{f"Total Medicare Payment-Annual-{yr}": f"Total Medicare Payment - {yr} ($/yr)" for yr in range(2015,2019+1)}
+    **{f"Total Medicare Payment-Annual-{yr}": f"Total Medicare Payment - {yr} ($/yr)" for yr in range(2015,2019+1)},
+    "Total Medicare Payment-ASC-Mean": "Medicare Payment - ASC", 
+    "Total Medicare Payment-HOPD-Mean": "Medicare Payment - HOPD",
+    "Otology, Total Medicare Payment-HOPD-Mean": "Medicare Payment - HOPD",
 }
 category_orders = {"Specialty": ["Facial plastics","Head & neck","Otology","Rhinology","Laryngology"]}
+color_discrete_map = {
+    "Total Medicare Payment-ASC-Mean": "black",
+    "Total Medicare Payment-HOPD-Mean": "gray",
+}
+color_discrete_sequence = px.colors.qualitative.Safe
 
 
-# In[ ]:
-
-
-import plotly
-plotly.__version__
-
-
-# In[ ]:
-
-
-rows = df_procedures_recalc.index.get_level_values(2) != "Total"
-fig = px.bar(x=df_procedures_recalc.index.get_level_values(2)[rows], 
-             y=df_procedures_recalc[("Total Medicare Payment","Overall","Mean")][rows], 
-             color=df_procedures_recalc.index.get_level_values(0)[rows],
-             category_orders=category_orders, labels=var_labels
-             )
-customize_bar_chart(fig)
-fig.show()
-
-
-# In[ ]:
+# In[339]:
 
 
 df = df_procedures_recalc.loc[df_procedures_recalc.index.get_level_values(2) != "Total"]
@@ -501,12 +515,13 @@ fig = px.bar(df,
              y=("Total Medicare Payment-Overall-Mean"),
              color="Specialty", text_auto=".2s",
              category_orders=category_orders, labels=var_labels,
+             color_discrete_sequence=color_discrete_sequence,
              )
 customize_bar_chart(fig)
 fig.show()
 
 
-# In[ ]:
+# In[340]:
 
 
 df = df_procedures_recalc.loc[df_procedures_recalc.index.get_level_values(2) != "Total"]
@@ -516,19 +531,30 @@ df["HCPCS"] = ("<b>#" + df["HCPCS Code"] + "</b>")
 fig = px.bar(df, 
              x="HCPCS", 
              y=("Total Medicare Payment-Overall-Mean"),
+             color="Specialty",
              facet_col="Specialty",
-             facet_col_wrap=2, text_auto='.2s', 
+             facet_col_wrap=2, 
+             facet_row_spacing=0.1, # default is 0.07 when facet_col_wrap is used
+             facet_col_spacing=0.05, # default is 0.03
+             text_auto='.2s', 
              category_orders=category_orders, labels=var_labels,
+             color_discrete_sequence=color_discrete_sequence,
              )
 fig.update_xaxes(matches=None)
-fig.update_yaxes(matches=None)
-#customize_bar_chart(fig)
-fig.for_each_xaxis(lambda axis: axis.update(showticklabels=True))
-fig.for_each_yaxis(lambda axis: axis.update(showticklabels=True))
+#fig.update_yaxes(matches=None)
+customize_bar_chart(fig)
+fig.for_each_xaxis(lambda axis: axis.update(dict(showticklabels=True, tickfont=dict(size=12))))
+fig.for_each_yaxis(lambda axis: axis.update(dict(showticklabels=True, title="")))
+
+#fig.for_each_trace( lambda trace: trace.update(marker=dict(color="#000",opacity=0.33,pattern=dict(shape=""))) if trace.name == "None" else (), )
+fig.update_layout(
+    width=1500, height=600,
+    margin=dict(l=20, r=20, t=20, b=20),)
+fig.for_each_annotation(lambda ann: ann.update(text=ann.text.split("=")[-1]))
 fig.show()
 
 
-# In[ ]:
+# In[341]:
 
 
 df = df_procedures_recalc.loc[df_procedures_recalc.index.get_level_values(2) != "Total"]
@@ -539,10 +565,115 @@ fig = px.bar(df,
              x="HCPCS", 
              y=[f"Total Medicare Payment-Annual-{yr}" for yr in range(2015,2019+1)],
              color="Specialty", text_auto='.2s',
-             category_orders=category_orders, labels=var_labels,
+             category_orders=category_orders, labels={**var_labels, "variable":"Year", "value":"Total Medicare Payment (USD)"},
+             color_discrete_sequence=color_discrete_sequence,
              )
 customize_bar_chart(fig)
 fig.show()
+
+
+# In[343]:
+
+
+df = df_procedures_recalc.loc[df_procedures_recalc.index.get_level_values(2) != "Total"]
+df.columns = ["-".join(col) for col in df.columns]
+df = df.sort_values(by=["Specialty","Total Medicare Payment-Overall-Mean"])
+df = df.reset_index()
+df["HCPCS"] = ("<b>#" + df["HCPCS Code"] + "</b>")
+fig = px.bar(df, 
+             x="HCPCS", 
+             y=["Total Medicare Payment-ASC-Mean", "Total Medicare Payment-HOPD-Mean"],
+             color="Specialty",
+             text_auto='.2s',
+             pattern_shape_sequence=["","/"],
+             color_discrete_sequence=color_discrete_sequence,
+             pattern_shape="variable",  # variable and value are special words: https://plotly.com/python/wide-form/#assigning-inferred-columns-to-nondefault-arguments
+             category_orders=category_orders, labels={**var_labels, "variable":"ASC/HOPD", "value":"Annual Medicare Payment (USD/yr)"},
+             )
+customize_bar_chart(fig)
+fig.show()
+
+
+# In[254]:
+
+
+a=df["Specialty"].unique()
+a.sort()
+a
+
+
+# In[383]:
+
+
+color_discrete_map = {
+    "Total Medicare Payment-ASC-Mean": "#ccc",
+    "Total Medicare Payment-HOPD-Mean": "#000",
+}
+pattern_shape_map = {
+    "Total Medicare Payment-ASC-Mean": "/",
+    "Total Medicare Payment-HOPD-Mean": "",
+}
+
+df = df_procedures_recalc.loc[df_procedures_recalc.index.get_level_values(2) != "Total"]
+df.columns = ["-".join(col) for col in df.columns]
+df = df.sort_values(by=["Specialty","Total Medicare Payment-Overall-Mean"])
+df = df.reset_index()
+df["HCPCS"] = ("<b>#" + df["HCPCS Code"] + "</b>")
+fig = px.bar(df, 
+             x="HCPCS", 
+             y=["Total Medicare Payment-HOPD-Mean","Total Medicare Payment-ASC-Mean"],
+             color="variable", color_discrete_map=color_discrete_map,
+             pattern_shape_map=pattern_shape_map,
+             color_discrete_sequence=color_discrete_sequence,
+             pattern_shape="variable",  # variable and value are special words: https://plotly.com/python/wide-form/#assigning-inferred-columns-to-nondefault-arguments
+             category_orders=category_orders, labels={**var_labels, "variable":"ASC/HOPD", "value":"Annual Medicare Payment (USD/yr)"},
+             )
+customize_bar_chart(fig)
+
+# https://stackoverflow.com/a/73313404/2879686
+fig.for_each_trace(
+    lambda trace: trace.update(
+        text=(df["Total Medicare Payment-ASC-%"].apply("{:.1%}".format) if "ASC-" in trace.name else "" ), textfont=dict(color="#000"),
+        textposition="auto",  marker_line_width=2, marker_line_color="#111"
+    )
+)
+fig.update_layout(
+    width=2000, height=400,
+    margin=dict(l=20, r=20, t=20, b=20),)
+
+specialty_freqs = df["Specialty"].value_counts().sort_index()  # sort index converts from being ordered by frequency to being ordered alphabetically
+loc_x = 0
+for ind, specialty in enumerate(specialty_freqs.index):
+    fig.add_annotation(
+        text=f"<b>{specialty}</b>", 
+        width=15*specialty_freqs[specialty],
+        x=loc_x-0.5+specialty_freqs[specialty]/2, 
+        xanchor="center", axref="x", xref="x",
+        bgcolor=color_discrete_sequence[ind], borderwidth=2, bordercolor="#000",
+        font=dict(color= "#000" if ind<=2 else "#FFF"),
+        #width=specialty_freqs[specialty],
+        y=7e6, yanchor="bottom",
+        showarrow=False,
+                )
+
+    fig.add_vline(x=loc_x-0.5, line_width=2, line_color="#000",opacity=1)
+    fig.add_vrect(x0=loc_x-0.5, x1=loc_x + specialty_freqs[specialty]-0.5, opacity=0.1, fillcolor=color_discrete_sequence[ind])
+    loc_x += specialty_freqs[specialty]
+
+
+fig.show()
+
+
+# In[261]:
+
+
+df["Specialty"].value_counts().sort_index().index
+
+
+# In[211]:
+
+
+[trace.name for trace in fig.data]
 
 
 # In[ ]:
