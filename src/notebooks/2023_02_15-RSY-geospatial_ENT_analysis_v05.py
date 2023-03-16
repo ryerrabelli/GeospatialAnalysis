@@ -49,7 +49,7 @@ import json
 import copy   # to perform dict deep copy
 
 
-# In[ ]:
+# In[3]:
 
 
 #@title ## Option 1) Mount google drive and import my code
@@ -92,7 +92,7 @@ print(sys.path)
 
 # # Helper functions
 
-# In[ ]:
+# In[4]:
 
 
 colab_ip = get_ipython().run_line_magic('system', 'hostname -I   # uses colab magic to get list from bash')
@@ -295,7 +295,7 @@ save_df(records, "records_for_HCPCS=60240")
 
 # The slope given in the csv file is actually the inverse slope. We need to either recalculate it or invert it. I will just recalculate all the regression values.
 
-# In[ ]:
+# In[5]:
 
 
 df_procedures_orig = pd.read_csv("data/1_renamed/procedure_specific_data.csv",
@@ -419,9 +419,9 @@ for col_category in col_categories:
         df_procedures_recalc[(col_category,"HOPD","%")] =             df_procedures_recalc[(col_category,"HOPD","Mean")] / df_procedures_recalc[(col_category,"Overall","Mean")]
 
 # Calculate payment divided by service
-for location in ["ASC","HOPD","Overall"]:
+for facility in ["ASC","HOPD","Overall"]:
     # "Total Number of Services", "Total Medicare Payment"
-    df_procedures_recalc[ ("Payment Per Service",location,"Mean") ] = df_procedures_recalc[ ("Total Medicare Payment",location,"Mean") ] / df_procedures_recalc[ ("Total Number of Services",location,"Mean") ]
+    df_procedures_recalc[ ("Payment Per Service",facility,"Mean") ] = df_procedures_recalc[ ("Total Medicare Payment",facility,"Mean") ] / df_procedures_recalc[ ("Total Number of Services",facility,"Mean") ]
 
 # Rearrange cols alphabetically, but only by the first two elements of the each column's name tuple
 # This allows the order of the newly added columns to remain relative to themselves, but be rearranged relative to the other columns
@@ -462,6 +462,7 @@ with pd.option_context("display.float_format", "{:,.2f}".format):
 df_procedures_recalc_style.to_excel("data/2_analytics/df_procedures_recalc.xlsx", engine='openpyxl')
 df_procedures_recalc.to_pickle("data/2_analytics/df_procedures_recalc.pkl")
 
+# colab magic
 get_ipython().system('ls -l "data/2_analytics"')
 
 # Saves inside the "outputs" folder in a subfolder matching the name of this notebook
@@ -473,7 +474,7 @@ save_df(df_procedures_recalc, "df_procedures_recalc")
 
 # ## Read data from pickle (skip analysis step above)
 
-# In[113]:
+# In[6]:
 
 
 df_procedures_recalc = pd.read_pickle("data/2_analytics/df_procedures_recalc.pkl")
@@ -481,7 +482,7 @@ df_procedures_recalc = pd.read_pickle("data/2_analytics/df_procedures_recalc.pkl
 
 # ## Setup plotly figure saving
 
-# In[114]:
+# In[7]:
 
 
 default_plotly_save_scale = 4
@@ -520,7 +521,7 @@ def save_plotly_figure(fig, file_name:str, animated=False, scale=None, save_in_s
 
 # ## Set up for plotting
 
-# In[115]:
+# In[260]:
 
 
 def customize_bar_chart(fig: plotly.graph_objs.Figure, hcpcs_angle=-75):
@@ -548,15 +549,19 @@ def customize_bar_chart(fig: plotly.graph_objs.Figure, hcpcs_angle=-75):
         gridcolor="#DDD",
         showspikes=True, spikemode="across", spikethickness=2, spikedash="solid"
     )))
-    fig.update_traces(insidetextfont=dict(color="#FFF"), outsidetextfont=dict(color="#000") )        
-
+    fig.update_traces(marker=dict(line=dict(color="#111",width=2)))
+    fig.update_traces(insidetextfont=dict(color="#FFF"), outsidetextfont=dict(color="#000") )  
+      
 
 var_labels = {
-    "Total Medicare Payment": "Total Medicare Payment ($/yr)",
-    "Total Medicare Payment-Overall-Mean": "Total Medicare Payment - 5yr mean ($/yr)",
+    "HCPCS": "HCPCS Code for Procedure",
+    "Total Medicare Payment": "Total Medicare Payment",
+    "Total Medicare Payment-Overall-Sum": "Total Medicare Payment ($)",
+    "Total Medicare Payment-Overall-Mean": "Total Medicare Payment ($/yr)",
+    "Total Medicare Payment-Any-Mean": "Medicare Payment ($/yr)",
+    "Total Medicare Payment-ASC-Mean": "Medicare Payment - ASC ($/yr)", 
+    "Total Medicare Payment-HOPD-Mean": "Medicare Payment - HOPD ($/yr)",
     **{f"Total Medicare Payment-Annual-{yr}": f"Total Medicare Payment - {yr} ($/yr)" for yr in range(2015,2019+1)},
-    "Total Medicare Payment-ASC-Mean": "Medicare Payment - ASC", 
-    "Total Medicare Payment-HOPD-Mean": "Medicare Payment - HOPD",
     "Otology, Total Medicare Payment-HOPD-Mean": "Medicare Payment - HOPD",
 }
 for key, var_label in var_labels.copy().items():
@@ -590,41 +595,102 @@ pattern_shape_map = {
     }
 }
 
+df_plot = df_procedures_recalc.copy().loc[df_procedures_recalc.index.get_level_values(2) != "Total"]  # remove rows that are just totals
+df_plot.columns = ["-".join(col) for col in df_plot.columns]  # flatten column names from multiindex
+df_plot = df_plot.reset_index()
+df_plot["HCPCS formatted"] = ("<b>#" + df_plot["HCPCS Code"] + "</b>")
+df_plot["SpecialtyOrder"] = df_plot["Specialty"].replace({specialty: ind for ind,specialty in enumerate(category_orders["Specialty"])})
+# Sorting by SpecialtyOrder first isn't always necessary if "Specialty" is used for a variable like color
+# reset index aftwards. Can have drop=True since the index was reset just a few lines earlier so the new index is just a useless number
+df_plot = df_plot.sort_values(by=["SpecialtyOrder","Total Number of Services-Overall-Mean"]).reset_index(drop=True)
+df_plot_ordered_by_payment = df_plot.sort_values(by=["SpecialtyOrder","Total Medicare Payment-Overall-Mean"]).reset_index(drop=True)
+
+
+# Calculate specialty_freqs on df_plot and not df_recalc to avoid counting the "Total" rows
+#specialty_freqs = df_plot["Specialty"].value_counts().sort_index()  # sort index converts from being ordered by frequency to being ordered alphabetically
+specialty_freqs = df_plot["Specialty"].value_counts().loc[category_orders["Specialty"]]  # converts from being ordered by frequency to being ordered by category_orders
+
+
+def add_specialty_labels(fig: plotly.graph_objs.Figure, specialty_annotation_y=0, row=None, col=None, do_annotation=True, do_vline=True, do_vrect=True, yanchor="bottom"):
+    loc_x = 0
+    for ind, specialty in enumerate(specialty_freqs.index):
+        if do_annotation:
+            fig.add_annotation(
+                text=f"<b>{specialty}</b>", 
+                width=15*specialty_freqs[specialty],
+                x=loc_x-0.5+specialty_freqs[specialty]/2, 
+                xanchor="center", axref="x", xref="x",
+                bgcolor=color_discrete_map[specialty], borderwidth=2, bordercolor="#000",
+                font=dict(color= "#FFF" if ind<=3 else "#000"),
+                #width=specialty_freqs[specialty],
+                y=specialty_annotation_y, yanchor=yanchor,
+                showarrow=False, row=row, col=col
+            )
+        if do_vline:
+            fig.add_vline(x=loc_x-0.5, line_width=2, line_color="#000",opacity=1)
+        if do_vrect:
+            fig.add_vrect(x0=loc_x-0.5, x1=loc_x + specialty_freqs[specialty]-0.5, opacity=0.1, fillcolor=color_discrete_map[specialty])
+
+        loc_x += specialty_freqs[specialty]
+
 
 # ## Bar charts
 
-# In[ ]:
+# In[247]:
 
 
-df = df_procedures_recalc.loc[df_procedures_recalc.index.get_level_values(2) != "Total"]
-df.columns = ["-".join(col) for col in df.columns]
-df = df.sort_values(by="Total Medicare Payment-Overall-Mean").reset_index()
-df["HCPCS"] = ("<b>#" + df["HCPCS Code"] + "</b>")
-fig = px.bar(df, 
-             x="HCPCS", 
-             y=("Total Medicare Payment-Overall-Mean"),
+y_categories = ["Total Medicare Payment", "Total Number of Services"]  # in either ["Total Medicare Payment", "Total Number of Services"]
+specialty_annotation_y = 7.5e6
+
+fig = px.bar(df_plot_ordered_by_payment, 
+             x="HCPCS formatted", 
+             y=[f"{y_category}-Overall-Mean" for y_category in y_categories],
+             facet_row="variable",
              color="Specialty", text_auto=".2s",
-             category_orders=category_orders, labels=var_labels,
+                         # category_orders=category_orders, labels={**var_labels, "variable":"ASC/HOPD", "value":var_labels[f"{y_category}-Any-Mean"]},
+
+             category_orders=category_orders, labels={**var_labels, "variable":"a"},
              color_discrete_map=color_discrete_map, color_discrete_sequence=color_discrete_sequence,
              )
 
 customize_bar_chart(fig)
 #fig.update_layout(uniformtext_minsize=10, uniformtext_mode="show")
 fig.update_traces( insidetextfont=dict(color="white", size=24), outsidetextfont=dict(color="black", size=24) )        
+fig.update_yaxes(matches=None)
+#fig.for_each_yaxis(lambda axis: axis.update(dict(showticklabels=True, title="")))
+for ind, y_category in enumerate(y_categories):  # ::-1 makes list reverse; necessary since row facet/subplot numbers start from bottom of figure
+    row_num = len(y_categories)-ind
+    row_title = var_labels[f"{y_category}-Overall-Mean"]
+    row_title_split = row_title.split(" ")
+    row_title_split[round(len(row_title_split)/2-0.501)] += "<br>"
+    fig.update_yaxes(dict(title=" ".join(row_title_split)),row=row_num)
+fig.for_each_annotation(lambda ann: ann.update(text=""))
 
+
+add_specialty_labels(fig, specialty_annotation_y, row=2, col=1)
 fig.show()
 
 
-# In[ ]:
+# In[170]:
 
 
-df = df_procedures_recalc.loc[df_procedures_recalc.index.get_level_values(2) != "Total"]
-df.columns = ["-".join(col) for col in df.columns]
-df = df.sort_values(by="Total Medicare Payment-Overall-Mean").reset_index()
-df["HCPCS"] = ("<b>#" + df["HCPCS Code"] + "</b>")
-fig = px.bar(df, 
-             x="HCPCS", 
-             y=("Total Medicare Payment-Overall-Mean"),
+specialty_freqs
+
+
+# In[160]:
+
+
+14+13+9+22+15
+
+
+# In[169]:
+
+
+y_category = "Total Medicare Payment"  # in either ["Total Medicare Payment", "Total Number of Services"]
+
+fig = px.bar(df_plot_ordered_by_payment, 
+             x="HCPCS formatted", 
+             y=f"{y_category}-Overall-Mean",
              color="Specialty",
              facet_col="Specialty",
              facet_col_wrap=2, 
@@ -635,59 +701,50 @@ fig = px.bar(df,
              color_discrete_map=color_discrete_map, color_discrete_sequence=color_discrete_sequence,
              )
 fig.update_xaxes(matches=None)
-#fig.update_yaxes(matches=None)
 customize_bar_chart(fig, hcpcs_angle=None)
 
-fig.for_each_xaxis(lambda axis: axis.update(dict(showticklabels=True, tickfont=dict(size=12))))
+fig.for_each_xaxis(lambda axis: axis.update(dict(showticklabels=True, tickfont=dict(size=12),range=[-0.5,np.max(specialty_freqs)+-0.5])))
 fig.for_each_yaxis(lambda axis: axis.update(dict(showticklabels=True, title="")))
 
 #fig.for_each_trace( lambda trace: trace.update(marker=dict(color="#000",opacity=0.33,pattern=dict(shape=""))) if trace.name == "None" else (), )
 fig.update_layout(
     width=1500, height=600,
-    margin=dict(l=20, r=20, t=20, b=20),)
+    margin=dict(l=20, r=20, t=20, b=20))
+fig.update_layout(showlegend=False)
 fig.for_each_annotation(lambda ann: ann.update(text=ann.text.split("=")[-1]))
 fig.show()
 
 
-# In[ ]:
+# In[251]:
 
 
-df = df_procedures_recalc.loc[df_procedures_recalc.index.get_level_values(2) != "Total"]
-df.columns = ["-".join(col) for col in df.columns]
-df = df.sort_values(by="Total Medicare Payment-Overall-Mean").reset_index()
-df["HCPCS"] = ("<b>#" + df["HCPCS Code"] + "</b>")
-fig = px.bar(df, 
-             x="HCPCS", 
-             y=[f"Total Medicare Payment-Annual-{yr}" for yr in range(2015,2019+1)],
+y_category = "Total Medicare Payment"  # in either ["Total Medicare Payment", "Total Number of Services"]
+specialty_annotation_y = 35e6
+
+fig = px.bar(df_plot_ordered_by_payment, 
+             x="HCPCS formatted", 
+             y=[f"{y_category}-Annual-{yr}" for yr in range(2015,2019+1)],
              color="Specialty", text_auto='.2s',
-             category_orders=category_orders, labels={**var_labels, "variable":"Year", "value":"Total Medicare Payment (USD)"},
+             category_orders=category_orders, 
+             labels={**var_labels, "variable":"Year", "value":var_labels[f"{y_category}-Overall-Sum"]},
              color_discrete_map=color_discrete_map, color_discrete_sequence=color_discrete_sequence,
              )
 customize_bar_chart(fig)
+add_specialty_labels(fig, specialty_annotation_y)
+
 fig.show()
 
 
-# In[ ]:
+# In[108]:
 
 
-
-
-
-# In[ ]:
-
-
-df = df_procedures_recalc.loc[df_procedures_recalc.index.get_level_values(2) != "Total"]
-df.columns = ["-".join(col) for col in df.columns]
-df = df.sort_values(by=["Specialty","Total Medicare Payment-Overall-Mean"])
-df = df.reset_index()
-df["HCPCS"] = ("<b>#" + df["HCPCS Code"] + "</b>")
-fig = px.bar(df, 
-             x="HCPCS", 
-             y=["Total Medicare Payment-ASC-Mean", "Total Medicare Payment-HOPD-Mean"],
+fig = px.bar(df_plot, 
+             x="HCPCS formatted", 
+             y=[f"{y_category}-{facility}-Mean" for facility in ["ASC","HOPD"]],
              color="Specialty",
              text_auto='.2s',
              pattern_shape="variable",  # variable and value are special words: https://plotly.com/python/wide-form/#assigning-inferred-columns-to-nondefault-arguments
-             category_orders=category_orders, labels={**var_labels, "variable":"ASC/HOPD", "value":"Annual Medicare Payment (USD/yr)"},
+             category_orders=category_orders, labels={**var_labels, "variable":"ASC/HOPD", "value":var_labels[f"{y_category}-Any-Mean"]},
              pattern_shape_sequence=["","/"],
              color_discrete_map=color_discrete_map, color_discrete_sequence=color_discrete_sequence,
              )
@@ -695,28 +752,23 @@ customize_bar_chart(fig)
 fig.show()
 
 
-# ## Complex bar charts
+# ## Complex bar charts via `px.`
 
-# In[ ]:
+# In[252]:
 
 
+df = df_plot_ordered_by_payment
 y_category = "Total Medicare Payment"  # in either ["Total Medicare Payment", "Total Number of Services"]
 specialty_annotation_y = 7.5e6
 
-df = df_procedures_recalc.loc[df_procedures_recalc.index.get_level_values(2) != "Total"]
-df.columns = ["-".join(col) for col in df.columns]
-df = df.reset_index()
-df["SpecialtyOrder"] = df["Specialty"].replace({specialty: ind for ind,specialty in enumerate(category_orders["Specialty"])})
-df = df.sort_values(by=["SpecialtyOrder","Total Medicare Payment-Overall-Mean"])   # sort by payment regardless of plotting payment or services
-df["HCPCS"] = ("<b>#" + df["HCPCS Code"] + "</b>")
 fig = px.bar(df, 
-             x="HCPCS", 
-             y=[f"{y_category}-HOPD-Mean",f"{y_category}-ASC-Mean"],
+             x="HCPCS formatted", 
+             y=[f"{y_category}-{facility}-Mean" for facility in ["ASC","HOPD"]],
              color="variable",
              pattern_shape="variable",  # variable and value are special words: https://plotly.com/python/wide-form/#assigning-inferred-columns-to-nondefault-arguments
              color_discrete_map=color_discrete_map,
              pattern_shape_map=pattern_shape_map,
-             category_orders=category_orders, labels={**var_labels, "variable":"ASC/HOPD", "value":var_labels[f"{y_category}-HOPD-Mean"]},
+             category_orders=category_orders, labels={**var_labels, "variable":"ASC/HOPD", "value":var_labels[f"{y_category}-Any-Mean"]},
              hover_data=["Specialty", "HCPCS Description"]
              )
 customize_bar_chart(fig)
@@ -732,50 +784,28 @@ fig.update_layout(
     width=2000, height=400,
     margin=dict(l=20, r=20, t=20, b=20),)
 
-#specialty_freqs = df["Specialty"].value_counts().sort_index()  # sort index converts from being ordered by frequency to being ordered alphabetically
-specialty_freqs = df["Specialty"].value_counts().loc[category_orders["Specialty"]]  # converts from being ordered by frequency to being ordered by category_orders
 
-loc_x = 0
-for ind, specialty in enumerate(specialty_freqs.index):
-    fig.add_annotation(
-        text=f"<b>{specialty}</b>", 
-        width=15*specialty_freqs[specialty],
-        x=loc_x-0.5+specialty_freqs[specialty]/2, 
-        xanchor="center", axref="x", xref="x",
-        bgcolor=color_discrete_map[specialty], borderwidth=2, bordercolor="#000",
-        font=dict(color= "#FFF" if ind<=3 else "#000"),
-        #width=specialty_freqs[specialty],
-        y=specialty_annotation_y, yanchor="top",
-        showarrow=False,
-    )
-
-    fig.add_vline(x=loc_x-0.5, line_width=2, line_color="#000",opacity=1)
-    fig.add_vrect(x0=loc_x-0.5, x1=loc_x + specialty_freqs[specialty]-0.5, opacity=0.1, fillcolor=color_discrete_map[specialty])
-    loc_x += specialty_freqs[specialty]
+add_specialty_labels(fig, specialty_annotation_y)
 
 fig.show()
+save_plotly_figure(fig, file_name=f"Procedure Bar Chart- Medicare Payment" )
 
 
-# In[ ]:
+# In[253]:
 
 
+df = df_plot_ordered_by_payment
 y_category = "Total Number of Services"  # in either ["Total Medicare Payment", "Total Number of Services"]
 specialty_annotation_y = 6e4
 
-df = df_procedures_recalc.loc[df_procedures_recalc.index.get_level_values(2) != "Total"]
-df.columns = ["-".join(col) for col in df.columns]
-df = df.reset_index()
-df["SpecialtyOrder"] = df["Specialty"].replace({specialty: ind for ind,specialty in enumerate(category_orders["Specialty"])})
-df = df.sort_values(by=["SpecialtyOrder","Total Medicare Payment-Overall-Mean"])   # sort by payment regardless of plotting payment or services
-df["HCPCS"] = ("<b>#" + df["HCPCS Code"] + "</b>")
 fig = px.bar(df, 
-             x="HCPCS", 
-             y=[f"{y_category}-HOPD-Mean",f"{y_category}-ASC-Mean"],
+             x="HCPCS formatted", 
+             y=[f"{y_category}-{facility}-Mean" for facility in ["ASC","HOPD"]],
              color="variable",
              pattern_shape="variable",  # variable and value are special words: https://plotly.com/python/wide-form/#assigning-inferred-columns-to-nondefault-arguments
              color_discrete_map=color_discrete_map,
              pattern_shape_map=pattern_shape_map,
-             category_orders=category_orders, labels={**var_labels, "variable":"ASC/HOPD", "value":var_labels[f"{y_category}-HOPD-Mean"]},
+             category_orders=category_orders, labels={**var_labels, "variable":"ASC/HOPD", "value":var_labels[f"{y_category}-Any-Mean"]},
              hover_data=["Specialty", "HCPCS Description"]
              )
 customize_bar_chart(fig)
@@ -784,56 +814,34 @@ customize_bar_chart(fig)
 fig.for_each_trace(
     lambda trace: trace.update(
         text=(df[f"{y_category}-ASC-%"].apply("{:.1%}".format) if "ASC-" in trace.name else "" ), textfont=dict(color="#000"),
-        textposition="auto",  marker_line_width=2, marker_line_color="#111"
+        textposition="auto",
     )
 )
 fig.update_layout(
     width=2000, height=400,
     margin=dict(l=20, r=20, t=20, b=20),)
 
-#specialty_freqs = df["Specialty"].value_counts().sort_index()  # sort index converts from being ordered by frequency to being ordered alphabetically
-specialty_freqs = df["Specialty"].value_counts().loc[category_orders["Specialty"]]  # converts from being ordered by frequency to being ordered by category_orders
-
-loc_x = 0
-for ind, specialty in enumerate(specialty_freqs.index):
-    fig.add_annotation(
-        text=f"<b>{specialty}</b>", 
-        width=15*specialty_freqs[specialty],
-        x=loc_x-0.5+specialty_freqs[specialty]/2, 
-        xanchor="center", axref="x", xref="x",
-        bgcolor=color_discrete_map[specialty], borderwidth=2, bordercolor="#000",
-        font=dict(color= "#FFF" if ind<=3 else "#000"),
-        #width=specialty_freqs[specialty],
-        y=specialty_annotation_y, yanchor="bottom",
-        showarrow=False,
-                )
-
-    fig.add_vline(x=loc_x-0.5, line_width=2, line_color="#000",opacity=1)
-    fig.add_vrect(x0=loc_x-0.5, x1=loc_x + specialty_freqs[specialty]-0.5, opacity=0.1, fillcolor=color_discrete_map[specialty])
-    loc_x += specialty_freqs[specialty]
+add_specialty_labels(fig, specialty_annotation_y)
 
 fig.show()
+save_plotly_figure(fig, file_name=f"Procedure Bar Chart- Medicare Payment" )
 
 
-# In[ ]:
+# In[254]:
 
 
+df = df_plot_ordered_by_payment
 y_category = "Total Medicare Payment"  # in either ["Total Medicare Payment", "Total Number of Services"]
 specialty_annotation_y = 7.5e6
 
-df = df_procedures_recalc.loc[df_procedures_recalc.index.get_level_values(2) != "Total"]
-df.columns = ["-".join(col) for col in df.columns]
-df = df.reset_index()
-df["SpecialtyOrder"] = df["Specialty"].replace({specialty: ind for ind,specialty in enumerate(category_orders["Specialty"])})
-df = df.sort_values(by=["SpecialtyOrder","Total Medicare Payment-Overall-Mean"])   # sort by payment regardless of plotting payment or services
-df["HCPCS"] = ("<b>#" + df["HCPCS Code"] + "</b>")
 fig = px.bar(df, 
-             x="HCPCS", 
+             x="HCPCS formatted", 
              y=f"{y_category}-Overall-Mean",
              color="Specialty",
              color_discrete_map=color_discrete_map,
-             pattern_shape_map=pattern_shape_map,
-             category_orders=category_orders, labels={**var_labels, "variable":"ASC/HOPD", "value":var_labels[f"{y_category}-HOPD-Mean"]},
+             pattern_shape_map=pattern_shape_map,#save_plotly_figure(fig, file_name=f"Procedure Bar Chart- Medicare Payment" )
+             category_orders=category_orders, 
+             labels=var_labels,
              hover_data=["Specialty", "HCPCS Description"],
              text_auto=".2s",
              )
@@ -851,64 +859,24 @@ fig.update_layout(
     width=2000, height=400,
     margin=dict(l=20, r=20, t=20, b=20),)
 
-#specialty_freqs = df["Specialty"].value_counts().sort_index()  # sort index converts from being ordered by frequency to being ordered alphabetically
-specialty_freqs = df["Specialty"].value_counts().loc[category_orders["Specialty"]]  # converts from being ordered by frequency to being ordered by category_orders
+add_specialty_labels(fig, specialty_annotation_y)
 
-loc_x = 0
-for ind, specialty in enumerate(specialty_freqs.index):
-    fig.add_annotation(
-        text=f"<b>{specialty}</b>", 
-        width=15*specialty_freqs[specialty],
-        x=loc_x-0.5+specialty_freqs[specialty]/2, 
-        xanchor="center", axref="x", xref="x",
-        bgcolor=color_discrete_map[specialty], borderwidth=2, bordercolor="#000",
-        font=dict(color= "#FFF" if ind<=3 else "#000"),
-        #width=specialty_freqs[specialty],
-        y=specialty_annotation_y, yanchor="top",
-        showarrow=False,
-    )
-
-    fig.add_vline(x=loc_x-0.5, line_width=2, line_color="#000",opacity=1)
-    fig.add_vrect(x0=loc_x-0.5, x1=loc_x + specialty_freqs[specialty]-0.5, opacity=0.1, fillcolor=color_discrete_map[specialty])
-    loc_x += specialty_freqs[specialty]
 
 fig.show()
 
 
-# In[ ]:
+# ## Complex by charts via `go.`
 
-
-for ind1, (y_category, y_category_title) in enumerate(y_categories.items()):
-    row_num = 1 + ind1  # indexed from 1
-    col_num = 1
-    # Plot services (Total Number of Services), then division (Payment per Service)
-    for ind2, location in enumerate(["ASC","HOPD"]):
-        trace_name = f"{y_category}-{location}-Mean"
-        break
-
-df[trace_name].index[(df[trace_name]>=y_axes_limits[ind1][1])]
-
-
-# In[ ]:
+# In[262]:
 
 
 row_ct, col_ct = (2, 1)
-
-df = df_procedures_recalc.loc[df_procedures_recalc.index.get_level_values(2) != "Total"]
-df.columns = ["-".join(col) for col in df.columns]
-df = df.reset_index()
-df["SpecialtyOrder"] = df["Specialty"].replace({specialty: ind for ind,specialty in enumerate(category_orders["Specialty"])})
-#df = df.sort_values(by=["SpecialtyOrder","Total Medicare Payment-Overall-Mean"]).reset_index()   # sort by payment regardless of plotting payment or services
-df = df.sort_values(by=["SpecialtyOrder","Total Number of Services-Overall-Mean"]).reset_index()
-df["HCPCS"] = ("<b>#" + df["HCPCS Code"] + "</b>")
-
-
-specialty_freqs = df["Specialty"].value_counts().loc[category_orders["Specialty"]]  # converts from being ordered by frequency to being ordered by category_orders
+df = df_plot
 y_categories =  {"Total Medicare Payment":7e6, "Total Number of Services":6e4}
 y_axes_limits = [
     [0, 12500, 2500], [0, 2e3, 400],
 ]
-
+specialty_annotation_y = y_axes_limits[0][1]
 
 fig = plotly.subplots.make_subplots(rows=row_ct, cols=col_ct,
                     shared_xaxes=True,
@@ -919,12 +887,12 @@ y_categories = {"Total Number of Services":"Number of Services","Payment Per Ser
 for ind1, (y_category, y_category_title) in enumerate(y_categories.items()):
     row_num, col_num = (1 + ind1, 1)  # indexed from 1
     # Plot services (Total Number of Services), then division (Payment per Service)
-    for ind2, location in enumerate(["ASC","HOPD"]):
-        trace_name = f"{y_category}-{location}-Mean"
+    for ind2, facility in enumerate(["ASC","HOPD"]):
+        trace_name = f"{y_category}-{facility}-Mean"
 
         fig.add_trace(
-                    go.Bar(name=location,
-                        x=df["HCPCS"], y=df[trace_name], 
+                    go.Bar(name=facility,
+                        x=df["HCPCS formatted"], y=df[trace_name], 
                         marker_color=color_discrete_map[trace_name], marker_pattern_shape=pattern_shape_map[trace_name],
                         showlegend=ind1==0,
                         ),
@@ -935,14 +903,14 @@ for ind1, (y_category, y_category_title) in enumerate(y_categories.items()):
 # Add annotations for values cutoff
 for ind1, (y_category, y_category_title) in enumerate(y_categories.items()):
     row_num, col_num = (1 + ind1, 1)  # indexed from 1
-    for ind2, location in enumerate(["ASC","HOPD"]):
-        trace_name = f"{y_category}-{location}-Mean"
+    for ind2, facility in enumerate(["ASC","HOPD"]):
+        trace_name = f"{y_category}-{facility}-Mean"
         # Annotate values that are cutoff
         cutoff_value_indices = df[trace_name].index[df[trace_name]>=y_axes_limits[ind1][1]]
         for cutoff_value_index in cutoff_value_indices:
             cutoff_value = df[trace_name][cutoff_value_index]
             fig.add_annotation(
-                text="Cutoff value:<br>{:,.0f}".format(cutoff_value), 
+                text="<i>Value cutoff:</i><br>{:,.0f}".format(cutoff_value), 
                 font=dict(size=8),
                 x=cutoff_value_index-0.5+ind2*0.5, y=y_axes_limits[ind1][1], 
                 bgcolor="#FFF", opacity=0.8,
@@ -965,31 +933,7 @@ fig.update_layout(barmode="group")
 
 
 
-# Add annotations for specialty
-for ind1 in range(row_ct):
-    row_num, col_num = (1 + ind1, 1)  # indexed from 1
-    
-    loc_x = 0
-    for ind2, specialty in enumerate(specialty_freqs.index):
-
-        fig.add_vline(x=loc_x-0.5, line_width=1, line_color="#000",opacity=1, row=row_num,col=1,layer="below",)
-        fig.add_vrect(x0=loc_x-0.5, x1=loc_x + specialty_freqs[specialty]-0.5, opacity=0.1, fillcolor=color_discrete_map[specialty], row=row_num,col=1,layer="below",)
-        
-        specialty_annotation_y = y_axes_limits[0][1]
-        fig.add_annotation(
-            text=f"<b>{specialty}</b>", 
-            width=15*specialty_freqs[specialty],
-            x=loc_x-0.5+specialty_freqs[specialty]/2, 
-            xanchor="center", axref="x", xref="x",
-            bgcolor=color_discrete_map[specialty], borderwidth=2, bordercolor="#000",
-            font=dict(color= "#FFF" if ind2<=3 else "#000"),
-            #width=specialty_freqs[specialty],
-            y=specialty_annotation_y, yanchor="middle",
-            showarrow=False,
-            row=row_num,col=col_num, 
-        )
-
-        loc_x += specialty_freqs[specialty]
+add_specialty_labels(fig, specialty_annotation_y, yanchor="middle")
 
 
 for ind1 in range(row_ct):
@@ -1001,7 +945,12 @@ for ind1 in range(row_ct):
 # Only draw bottom most x axis labels
 fig.update_xaxes(title_text="<b>HCPCS Code</b>",  row=row_ct, col=1)
 
-
+fig.update_layout(
+    legend=dict(
+        x=0,
+        y=1,
+    )
+)
 fig.update_layout(
     width=1800, height=600,
     margin=dict(l=20, r=20, t=20, b=20),)
@@ -1015,30 +964,17 @@ fig.show()
 save_plotly_figure(fig, file_name=f"Procedure Bar Chart- Number of Services and Payment Per Service" )
 
 
-# In[ ]:
+# In[273]:
 
 
-(df[f"{y_category}-ASC-Mean"] + df[f"{y_category}-HOPD-Mean"]).index
-
-
-# In[ ]:
-
-
-row_ct=2
-col_ct=1
-
-specialty_freqs = df["Specialty"].value_counts().loc[category_orders["Specialty"]]  # converts from being ordered by frequency to being ordered by category_orders
+row_ct, col_ct = (2,1)
+df = df_plot
 y_categories =  {"Total Medicare Payment":7e6, "Total Number of Services":6e4}
-
-
-df = df_procedures_recalc.loc[df_procedures_recalc.index.get_level_values(2) != "Total"]
-df.columns = ["-".join(col) for col in df.columns]
-df = df.reset_index()
-df["SpecialtyOrder"] = df["Specialty"].replace({specialty: ind for ind,specialty in enumerate(category_orders["Specialty"])})
-#df = df.sort_values(by=["SpecialtyOrder","Total Medicare Payment-Overall-Mean"]).reset_index()   # sort by payment regardless of plotting payment or services
-df = df.sort_values(by=["SpecialtyOrder","Total Number of Services-Overall-Mean"]).reset_index()
-df["HCPCS"] = ("<b>#" + df["HCPCS Code"] + "</b>")
-
+y_axes_limits = [
+    #[0, 8e6], [0, 60e3], [0, 20e3], [0, 2e3],
+    [0, 8e6], [0, 20e3], [0, 2e3], [0, 2e3],
+]
+specialty_annotation_y = 7.5e7  #y_axes_limits[0][1]
 
 fig = plotly.subplots.make_subplots(rows=row_ct, cols=col_ct,
                     shared_xaxes=True,
@@ -1052,11 +988,11 @@ for ind1, (y_category, specialty_annotation_y) in enumerate(y_categories.items()
     col_num = 1
     
     # Draw bar chart. Each loop is one of the stacked bars
-    for ind3, location in enumerate(["HOPD","ASC"]):  # Have HOPD before ASC
-        trace_name = f"{y_category}-{location}-Mean"
+    for ind3, facility in enumerate(["HOPD","ASC"]):  # Have HOPD before ASC
+        trace_name = f"{y_category}-{facility}-Mean"
         fig.add_trace(
-            go.Bar(name=location, showlegend=ind1==0,
-                x=df["HCPCS"], y=df[trace_name], 
+            go.Bar(name=facility, showlegend=ind1==0,
+                x=df["HCPCS formatted"], y=df[trace_name], 
                 marker_color=color_discrete_map[trace_name], marker_pattern_shape=pattern_shape_map[trace_name],
                 ),
             row=row_num, col=col_num,
@@ -1081,7 +1017,7 @@ for ind1, y_category in enumerate(y_categories.keys()):
     for cutoff_value_index in cutoff_value_indices:
         cutoff_value = top_values[cutoff_value_index]
         fig.add_annotation(
-            text="Cutoff value:<br>{:,.0f} ({:.1%})".format(cutoff_value,df[f"{y_category}-ASC-%"][cutoff_value_index]), 
+            text="<i>Value cutoff:</i><br>{:,.0f} ({:.1%})".format(cutoff_value,df[f"{y_category}-ASC-%"][cutoff_value_index]), 
             font=dict(size=8),
             x=cutoff_value_index-0.5, y=y_axes_limits[ind1][1], 
             bgcolor="#FFF", opacity=0.8,
@@ -1098,41 +1034,9 @@ for ind1, y_category in enumerate(y_categories.keys()):
             row=row_num, col=col_num
         )
 
-# Add annotations for specialty
-for ind1 in range(row_ct):
-    row_num = ind1+1  # indexed from 1
-    col_num = 1
-    
-    loc_x = 0
-    for ind2, specialty in enumerate(specialty_freqs.index):
-
-        fig.add_vline(x=loc_x-0.5, line_width=1, line_color="#000",opacity=1, row=row_num,col=1,)
-        fig.add_vrect(x0=loc_x-0.5, x1=loc_x + specialty_freqs[specialty]-0.5, opacity=0.1, fillcolor=color_discrete_map[specialty], row=row_num,col=1,)
-        
-        if row_num==1:
-            specialty_annotation_y = 7e6
-            fig.add_annotation(
-                text=f"<b>{specialty}</b>", 
-                width=15*specialty_freqs[specialty],
-                x=loc_x-0.5+specialty_freqs[specialty]/2, 
-                xanchor="center", axref="x", xref="x",
-                bgcolor=color_discrete_map[specialty], borderwidth=2, bordercolor="#000",
-                font=dict(color= "#FFF" if ind2<=3 else "#000"),
-                #width=specialty_freqs[specialty],
-                y=specialty_annotation_y, yanchor="bottom",
-                showarrow=False,
-                row=row_num,col=col_num, 
-            )
-
-        loc_x += specialty_freqs[specialty]
+add_specialty_labels(fig, specialty_annotation_y)
 
 fig.update_layout(barmode="stack")
-
-y_axes_limits = [
-    #[0, 8e6], [0, 60e3], [0, 20e3], [0, 2e3],
-        [0, 8e6], [0, 20e3], [0, 2e3], [0, 2e3],
-
-]
 
 for ind1 in range(row_ct):
     row_num = ind1+1  # indexed from 1
@@ -1154,41 +1058,27 @@ fig.update_traces(marker_line_width=1, marker_line_color="#111")
 
 customize_bar_chart(fig)
 
-"""fig.update_layout(legend=dict(
-    yanchor="top",
-    y=0.99,
-    xanchor="left",
-    x=0.01
-))"""
 
 fig.show()
 
 save_plotly_figure(fig, file_name=f"Procedure Bar Chart- Payment and Number of Services" )
 
 
-# In[ ]:
+# In[270]:
 
 
-row_ct=4
-col_ct=1
-
-specialty_freqs = df["Specialty"].value_counts().loc[category_orders["Specialty"]]  # converts from being ordered by frequency to being ordered by category_orders
+row_ct, col_ct = (4,1)
+df = df_plot
 y_categories =  {"Total Medicare Payment":7e6, "Total Number of Services":6e4}
-
-
-df = df_procedures_recalc.loc[df_procedures_recalc.index.get_level_values(2) != "Total"]
-df.columns = ["-".join(col) for col in df.columns]
-df = df.reset_index()
-df["SpecialtyOrder"] = df["Specialty"].replace({specialty: ind for ind,specialty in enumerate(category_orders["Specialty"])})
-df = df.sort_values(by=["SpecialtyOrder","Total Medicare Payment-Overall-Mean"])   # sort by payment regardless of plotting payment or services
-df["HCPCS"] = ("<b>#" + df["HCPCS Code"] + "</b>")
-
+y_axes_limits = [
+    #[0, 8e6], [0, 60e3], [0, 20e3], [0, 2e3],
+    [0, 8e6], [0, 20e3], [0, 2e3], [0, 2e3],
+]
+specialty_annotation_y = 7e6
 
 fig = plotly.subplots.make_subplots(rows=row_ct, cols=col_ct,
                     shared_xaxes=True,
                     vertical_spacing=0.02)
-
-
 
 # Plot raw costs in ASCs and HOPDs
 for ind1, (y_category, specialty_annotation_y) in enumerate(y_categories.items()):
@@ -1196,11 +1086,11 @@ for ind1, (y_category, specialty_annotation_y) in enumerate(y_categories.items()
     col_num = 1
     
     # Draw bar chart. Each loop is one of the stacked bars
-    for ind3, location in enumerate(["HOPD","ASC"]):  # Have HOPD before ASC
-        trace_name = f"{y_category}-{location}-Mean"
+    for ind3, facility in enumerate(["HOPD","ASC"]):  # Have HOPD before ASC
+        trace_name = f"{y_category}-{facility}-Mean"
         fig.add_trace(
-            go.Bar(name=location, showlegend=ind1==0,
-                x=df["HCPCS"], y=df[trace_name], 
+            go.Bar(name=facility, showlegend=ind1==0,
+                x=df["HCPCS formatted"], y=df[trace_name], 
                 marker_color=color_discrete_map[trace_name], marker_pattern_shape=pattern_shape_map[trace_name],
                 ),
             row=row_num, col=col_num,
@@ -1219,56 +1109,24 @@ fig.for_each_trace(
 )
 
 # Plot division (Payment per Service)
-for ind1, location in enumerate(["ASC","HOPD"]):
+for ind1, facility in enumerate(["ASC","HOPD"]):
     row_num = ind1+1 +2  # ct starts from 1, plus have to already added rows
-    trace_name = f"Payment Per Service-{location}-Mean"
+    trace_name = f"Payment Per Service-{facility}-Mean"
 
     fig.add_trace(
                 go.Bar(
                     showlegend=False,
-                    x=df["HCPCS"], y=df[trace_name], 
+                    x=df["HCPCS formatted"], y=df[trace_name], 
                     marker_color=color_discrete_map[trace_name], marker_pattern_shape=pattern_shape_map[trace_name],
                     ),
                 row=row_num, col=1,
                 )
-    fig.update_yaxes(title_text=f"Mean {location}<br>Payment per Service ($)",  row=row_num,col=col_num)
+    fig.update_yaxes(title_text=f"Mean {facility}<br>Payment per Service ($)",  row=row_num,col=col_num)
 
 fig.update_layout(barmode="stack")
 
-# Add annotations for specialty
-for ind1 in range(row_ct):
-    row_num = ind1+1  # indexed from 1
-    col_num = 1
-    
-    loc_x = 0
-    for ind2, specialty in enumerate(specialty_freqs.index):
+add_specialty_labels(fig, specialty_annotation_y)
 
-        fig.add_vline(x=loc_x-0.5, line_width=1, line_color="#000",opacity=1, row=row_num,col=1,)
-        fig.add_vrect(x0=loc_x-0.5, x1=loc_x + specialty_freqs[specialty]-0.5, opacity=0.1, fillcolor=color_discrete_map[specialty], row=row_num,col=1,)
-        
-        if row_num==1:
-            specialty_annotation_y = 7e6
-            fig.add_annotation(
-                text=f"<b>{specialty}</b>", 
-                width=15*specialty_freqs[specialty],
-                x=loc_x-0.5+specialty_freqs[specialty]/2, 
-                xanchor="center", axref="x", xref="x",
-                bgcolor=color_discrete_map[specialty], borderwidth=2, bordercolor="#000",
-                font=dict(color= "#FFF" if ind2<=3 else "#000"),
-                #width=specialty_freqs[specialty],
-                y=specialty_annotation_y, yanchor="bottom",
-                showarrow=False,
-                row=row_num,col=col_num, 
-            )
-
-        loc_x += specialty_freqs[specialty]
-
-
-y_axes_limits = [
-    #[0, 8e6], [0, 60e3], [0, 20e3], [0, 2e3],
-        [0, 8e6], [0, 20e3], [0, 2e3], [0, 2e3],
-
-]
 
 for ind1 in range(row_ct):
     row_num = ind1+1  # indexed from 1
@@ -1517,7 +1375,7 @@ for ind1, specialty in enumerate(category_orders["Specialty"]):
     for ind2, (y_category, y_category_prefix) in enumerate(y_categories.items()):
         row_num, col_num = ind1+1, ind2+1
         specialty_df = df[df["Specialty"]==specialty]
-        locations = ["ASC","HOPD"]
+        facilities = ["ASC","HOPD"]
         trace_name = [f"{y_category}-ASC-Mean",f"{y_category}-HOPD-Mean"]
         fig.add_trace(
             go.Pie(
